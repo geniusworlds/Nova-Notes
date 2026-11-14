@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Nova Notes</string>
+    <string name="nav_notes">Notes</string>
+    <string name="nav_todo">To-do</string>
+    <string name="nav_modeling">Modeling</string>
+    <string name="nav_settings">Backup &amp; Settings</string>
+    <string name="search_placeholder">Search notes, folders, tasks, templates…</string>
+    <string name="all_notes">All Notes</string>
+    <string name="favorites">Favorites</string>
+    <string name="recently_edited">Recently Edited</string>
+    <string name="trash">Trash</string>
+    <string name="status_saving">Saving…</string>
+    <string name="status_saved">Saved</string>
+    <string name="modeling_engine_title">Modeling Engine</string>
+    <string name="backup_restore_title">Local Backup &amp; Security</string>
+</resources>
