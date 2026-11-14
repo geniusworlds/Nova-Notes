@@ -136,7 +136,7 @@ fun ModelingScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Valid: ${result.validCount} • Invalid: ${result.invalidCount} • Dup: ${result.duplicateCount} • Groups: ${result.groups.size}",
+                    text = novaText(isArabic, "Valid: \${result.validCount} • Invalid: \${result.invalidCount} • Dup: \${result.duplicateCount} • Groups: \${result.groups.size}", "صحيح: \${result.validCount} • غير صحيح: \${result.invalidCount} • مكرر: \${result.duplicateCount} • المجموعات: \${result.groups.size}"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -406,7 +406,7 @@ private fun ModelingInputAndConfigPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Structured Input (${result.totalInputLines} lines)",
+                text = novaText(isArabic, "Structured Input (\${result.totalInputLines} lines)", "المدخلات المنظمة (\${result.totalInputLines} سطراً)"),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -491,7 +491,7 @@ private fun ModelingInputAndConfigPanel(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "L${rec.originalIndex}: ${rec.rawLine}",
+                                text = "س\${rec.originalIndex}: \${rec.rawLine}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if (rec.isInvalid) StatusError else StatusWarning,
                                 modifier = Modifier.weight(1f)
@@ -767,7 +767,7 @@ private fun ModelingLivePreviewPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Live Output (${result.groups.size} groups • ${result.processingTimeMs} ms)",
+                text = novaText(isArabic, "Live Output (\${result.groups.size} groups • \${result.processingTimeMs} ms)", "المخرجات المباشرة (\${result.groups.size} مجموعات • \${result.processingTimeMs} مللي ثانية)"),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -857,7 +857,7 @@ private fun ModelingLivePreviewPanel(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Group #${group.groupNumber} • Date: ${group.dateString}",
+                                    text = novaText(isArabic, "Group #\${group.groupNumber} • Date: \${group.dateString}", "المجموعة رقم \${group.groupNumber} • التاريخ: \${group.dateString}"),
                                     style = MaterialTheme.typography.labelLarge,
                                     color = MaterialTheme.colorScheme.primary
                                 )
