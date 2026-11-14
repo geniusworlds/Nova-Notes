@@ -477,7 +477,7 @@ private fun ModelingInputAndConfigPanel(
             ) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "Validation & Duplicate Diagnostics (Tap to edit record)",
+                        text = novaText(isArabic, "Validation & Duplicate Diagnostics (Tap to edit record)", "فحص الصحة والتكرارات (اضغط لتعديل السجل)"),
                         style = MaterialTheme.typography.labelLarge,
                         color = StatusWarning
                     )
@@ -827,7 +827,7 @@ private fun ModelingLivePreviewPanel(
         if (result.groups.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = "Enter records in the Input panel to see real-time formatted output.",
+                    text = novaText(isArabic, "Enter records in the Input panel to see real-time formatted output.", "أدخل السجلات في لوحة الإدخال لمشاهدة النتائج المنسقة فورياً."),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
