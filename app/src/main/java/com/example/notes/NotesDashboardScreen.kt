@@ -147,6 +147,7 @@ fun NotesDashboardScreen(
                         )
                     )
             ) {
+                val bannerPrimary = MaterialTheme.colorScheme.primary
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,7 +157,7 @@ fun NotesDashboardScreen(
                     var x = 0f
                     while (x < size.width) {
                         drawLine(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.07f),
+                            color = bannerPrimary.copy(alpha = 0.07f),
                             start = Offset(x, 0f),
                             end = Offset(x + 24f, size.height),
                             strokeWidth = 1.2f
@@ -164,7 +165,7 @@ fun NotesDashboardScreen(
                         x += step
                     }
                     drawCircle(
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                        color = bannerPrimary.copy(alpha = 0.12f),
                         radius = size.height * 0.8f,
                         center = Offset(size.width * 0.82f, size.height * 0.25f)
                     )
