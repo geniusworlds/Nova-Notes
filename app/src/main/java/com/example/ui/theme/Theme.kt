@@ -6,7 +6,10 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
+
+val LocalNovaArabic = staticCompositionLocalOf { false }
 
 private val NovaDarkColorScheme = darkColorScheme(
     primary = ColorPurple, onPrimary = ColorWhite, primaryContainer = ColorPurpleDeep,
