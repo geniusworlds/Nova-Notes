@@ -333,7 +333,7 @@ fun NoteEditorScreen(
                     ) {
                         Icon(Icons.Default.Folder, contentDescription = novaText(isArabic, "Folder", "المجلد"), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = currentFolder?.name ?: "No Folder", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
+                        Text(text = currentFolder?.name ?: novaText(isArabic, "No Folder", "بدون مجلد"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
                 DropdownMenu(
