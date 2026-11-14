@@ -62,17 +62,8 @@ import com.example.backup.BackupMetadata
 import com.example.backup.BackupPayload
 import com.example.backup.RestoreSelection
 import com.example.session_recovery.AppSettingsState
-import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.surface
-import com.example.ui.theme.MaterialTheme.colorScheme.primary
-import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
-import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
-import com.example.ui.theme.MaterialTheme.colorScheme.outline
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
