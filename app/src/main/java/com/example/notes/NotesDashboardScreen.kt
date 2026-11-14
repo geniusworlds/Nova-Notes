@@ -540,7 +540,7 @@ private fun NoteCardItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = note.title.ifBlank { "Untitled Note" },
+                        text = note.title.ifBlank { novaText(isArabic, "Untitled Note", "ملاحظة بلا عنوان") },
                         style = MaterialTheme.typography.titleMedium,
                         color = if (note.title.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
