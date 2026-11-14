@@ -273,7 +273,7 @@ fun BackupSettingsScreen(
                     Column {
                         Text(novaText(isArabic, "Local PIN Protection", "الحماية برمز PIN محلي"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                         Text(
-                            text = if (settings.pinLockEnabled) "PIN Lock Active on Launch" else "Optional offline PIN lock",
+                            text = if (settings.pinLockEnabled) novaText(isArabic, "PIN Lock Active on Launch", "قفل PIN مفعل عند تشغيل التطبيق") else novaText(isArabic, "Optional offline PIN lock", "قفل PIN اختياري دون اتصال"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -283,7 +283,7 @@ fun BackupSettingsScreen(
                     onClick = { showPinDialog = true },
                     modifier = Modifier.testTag("configure_pin_button")
                 ) {
-                    Text(if (settings.pinLockEnabled) "Manage PIN" else "Set PIN", color = MaterialTheme.colorScheme.primary)
+                    Text(if (settings.pinLockEnabled) novaText(isArabic, "Manage PIN", "إدارة رمز PIN") else novaText(isArabic, "Set PIN", "تعيين رمز PIN"), color = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -413,9 +413,9 @@ fun BackupSettingsScreen(
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(
-                            text = "Checksum Verified (${previewPayload.checksum.take(16)}…)\n" +
-                                "Contains ${previewPayload.notes.size} notes, ${previewPayload.folders.size} folders, " +
-                                "${previewPayload.todos.size} tasks, ${previewPayload.templates.size} templates.",
+                            text = novaText(isArabic, "Checksum Verified (${previewPayload.checksum.take(16)}…)\n", "تم التحقق من بصمة النسخة (${previewPayload.checksum.take(16)}…)\n") +
+                                novaText(isArabic, "Contains ${previewPayload.notes.size} notes, ${previewPayload.folders.size} folders, ", "تحتوي على ${previewPayload.notes.size} ملاحظة و${previewPayload.folders.size} مجلد و") +
+                                novaText(isArabic, "${previewPayload.todos.size} tasks, ${previewPayload.templates.size} templates.", "${previewPayload.todos.size} مهمة و${previewPayload.templates.size} قالب."),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(10.dp)
@@ -576,7 +576,7 @@ fun BackupSettingsScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background)
                 ) {
-                    Text(if (pinInput.length >= 4) "Enable PIN" else "Disable PIN", fontWeight = FontWeight.Bold)
+                    Text(if (pinInput.length >= 4) novaText(isArabic, "Enable PIN", "تفعيل رمز PIN") else novaText(isArabic, "Disable PIN", "تعطيل رمز PIN"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
