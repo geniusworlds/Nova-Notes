@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.database.TodoEntity
+import com.example.ui.theme.LocalNovaArabic
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 
@@ -69,6 +70,8 @@ fun TodoScreen(
     onMoveOrder: (TodoEntity, Boolean) -> Unit,
     onClearCompleted: () -> Unit
 ) {
+    val isArabic = LocalNovaArabic.current
+
     var selectedCategory by remember { mutableStateOf("All") }
     var showEditorDialog by remember { mutableStateOf(false) }
     var editingTodo by remember { mutableStateOf<TodoEntity?>(null) }
