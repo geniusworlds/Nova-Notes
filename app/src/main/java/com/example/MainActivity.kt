@@ -86,15 +86,15 @@ import com.example.session_recovery.SessionRecoveryManager
 import com.example.session_recovery.novaDataStore
 import com.example.settings.BackupSettingsScreen
 import com.example.todo.TodoScreen
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
+import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.surface
+import com.example.ui.theme.MaterialTheme.colorScheme.primary
+import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
 import com.example.ui.theme.NovaNotesTheme
-import com.example.ui.theme.ObsidianBlack
+import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -245,19 +245,19 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val useNavigationRail = maxWidth >= 700.dp
 
         Scaffold(
-            containerColor = ObsidianBlack,
+            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 if (!useNavigationRail && !editorState.isOpen) {
                     NavigationBar(
-                        containerColor = CardDarkGray,
-                        contentColor = TextWhite,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .windowInsetsPadding(WindowInsets.navigationBars)
                             .testTag("bottom_navigation_bar")
@@ -305,8 +305,8 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
             ) {
                 if (useNavigationRail && !editorState.isOpen) {
                     NavigationRail(
-                        containerColor = CardDarkGray,
-                        contentColor = TextWhite,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.fillMaxHeight().testTag("side_navigation_rail")
                     ) {
                         NavigationRailItem(
@@ -532,9 +532,9 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                             .padding(bottom = 18.dp, start = 20.dp, end = 20.dp)
                     ) {
                         Surface(
-                            color = CardElevatedGray,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, NovaCyan),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("status_banner")
                         ) {
                             Row(
@@ -544,7 +544,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                                 Text(
                                     text = statusBannerMessage.orEmpty(),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = NovaCyan
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -559,7 +559,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
         var rawImportText by remember(mode) { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showImportTextDialog = null },
-            containerColor = CardElevatedGray,
+            containerColor = MaterialTheme.colorScheme.surface,
             title = {
                 Text(
                     when (mode) {
@@ -567,7 +567,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                         "BACKUP" -> "Import & Validate Full Backup (JSON)"
                         else -> "Import Notes (TXT / JSON / CSV)"
                     },
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -584,12 +584,12 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Select File from Device Storage…", color = NovaCyan)
+                        Text("Select File from Device Storage…", color = MaterialTheme.colorScheme.primary)
                     }
                     Text(
                         "Or paste content directly below (validated before import):",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     OutlinedTextField(
                         value = rawImportText,
@@ -609,7 +609,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                             showImportTextDialog = null
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("confirm_import_button")
                 ) {
                     Text("Validate & Import", fontWeight = FontWeight.Bold)
@@ -617,7 +617,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
             },
             dismissButton = {
                 TextButton(onClick = { showImportTextDialog = null }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -666,7 +666,7 @@ private fun PinLockGateScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp)
             .testTag("pin_lock_gate_screen"),
         contentAlignment = Alignment.Center
@@ -675,9 +675,9 @@ private fun PinLockGateScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Icon(Icons.Default.Lock, contentDescription = null, tint = NovaCyan)
-            Text("NOVA NOTES LOCKED", style = MaterialTheme.typography.headlineMedium, color = TextWhite)
-            Text("Enter your offline PIN to unlock your notes", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+            Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Text("NOVA NOTES LOCKED", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
+            Text("Enter your offline PIN to unlock your notes", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             OutlinedTextField(
                 value = pin,
@@ -701,7 +701,7 @@ private fun PinLockGateScreen(
                         errorText = "Incorrect PIN"
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("unlock_pin_button")
             ) {
                 Text("Unlock", fontWeight = FontWeight.Bold)
@@ -712,18 +712,18 @@ private fun PinLockGateScreen(
 
 @Composable
 private fun novaNavBarItemColors() = NavigationBarItemDefaults.colors(
-    selectedIconColor = NovaCyan,
-    selectedTextColor = NovaCyan,
-    indicatorColor = NovaDeepTeal,
-    unselectedIconColor = TextSecondary,
-    unselectedTextColor = TextSecondary
+    selectedIconColor = MaterialTheme.colorScheme.primary,
+    selectedTextColor = MaterialTheme.colorScheme.primary,
+    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 )
 
 @Composable
 private fun novaNavRailItemColors() = NavigationRailItemDefaults.colors(
-    selectedIconColor = NovaCyan,
-    selectedTextColor = NovaCyan,
-    indicatorColor = NovaDeepTeal,
-    unselectedIconColor = TextSecondary,
-    unselectedTextColor = TextSecondary
+    selectedIconColor = MaterialTheme.colorScheme.primary,
+    selectedTextColor = MaterialTheme.colorScheme.primary,
+    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 )
