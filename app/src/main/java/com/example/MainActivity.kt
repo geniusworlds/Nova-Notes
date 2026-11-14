@@ -87,6 +87,7 @@ import com.example.session_recovery.novaDataStore
 import com.example.settings.BackupSettingsScreen
 import com.example.todo.TodoScreen
 import com.example.ui.theme.NovaNotesTheme
+import com.example.ui.theme.LocalNovaArabic
 import com.example.ui.theme.StatusError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity() {
             val preferences = remember { getSharedPreferences("nova_appearance", MODE_PRIVATE) }
             var isDarkTheme by remember { mutableStateOf(preferences.getBoolean("dark_theme", true)) }
             var isArabic by remember { mutableStateOf(preferences.getString("language", "en") == "ar") }
-            CompositionLocalProvider(LocalLayoutDirection provides if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+            CompositionLocalProvider(LocalLayoutDirection provides if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr, LocalNovaArabic provides isArabic) {
                 NovaNotesTheme(darkTheme = isDarkTheme) {
                     val novaViewModel: NovaViewModel = viewModel(factory = NovaViewModel.Factory(repository))
                     NovaNotesApp(
