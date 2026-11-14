@@ -60,6 +60,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -106,18 +110,33 @@ class MainActivity : ComponentActivity() {
         val repository = NovaRepository(database, sessionManager, backupManager)
 
         setContent {
-            NovaNotesTheme {
-                val novaViewModel: NovaViewModel = viewModel(
-                    factory = NovaViewModel.Factory(repository)
-                )
-                NovaNotesApp(viewModel = novaViewModel)
+            val preferences = remember { getSharedPreferences("nova_appearance", MODE_PRIVATE) }
+            var isDarkTheme by remember { mutableStateOf(preferences.getBoolean("dark_theme", true)) }
+            var isArabic by remember { mutableStateOf(preferences.getString("language", "en") == "ar") }
+            CompositionLocalProvider(LocalLayoutDirection provides if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr) {
+                NovaNotesTheme(darkTheme = isDarkTheme) {
+                    val novaViewModel: NovaViewModel = viewModel(factory = NovaViewModel.Factory(repository))
+                    NovaNotesApp(
+                        viewModel = novaViewModel,
+                        isDarkTheme = isDarkTheme,
+                        isArabic = isArabic,
+                        onThemeChange = { dark ->
+                            isDarkTheme = dark
+                            preferences.edit().putBoolean("dark_theme", dark).apply()
+                        },
+                        onLanguageChange = { arabic ->
+                            isArabic = arabic
+                            preferences.edit().putString("language", if (arabic) "ar" else "en").apply()
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun NovaNotesApp(viewModel: NovaViewModel) {
+fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boolean, onThemeChange: (Boolean) -> Unit, onLanguageChange: (Boolean) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -247,7 +266,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             selected = currentTab == MainTab.NOTES,
                             onClick = { viewModel.selectTab(MainTab.NOTES) },
                             icon = { Icon(Icons.Default.Description, contentDescription = "Notes") },
-                            label = { Text("Notes") },
+                            label = { Text(if (isArabic) "الملاحظات" else "Notes") },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_notes")
                         )
@@ -255,7 +274,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             selected = currentTab == MainTab.TODO,
                             onClick = { viewModel.selectTab(MainTab.TODO) },
                             icon = { Icon(Icons.Default.CheckBox, contentDescription = "To-do") },
-                            label = { Text("To-do") },
+                            label = { Text(if (isArabic) "المهام" else "To-do") },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_todo")
                         )
@@ -263,7 +282,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             selected = currentTab == MainTab.MODELING,
                             onClick = { viewModel.selectTab(MainTab.MODELING) },
                             icon = { Icon(Icons.Default.Schema, contentDescription = "Modeling") },
-                            label = { Text("Modeling") },
+                            label = { Text(if (isArabic) "تنسيق البيانات" else "Modeling") },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_modeling")
                         )
@@ -271,7 +290,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
                             icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = "Backup") },
-                            label = { Text("Backup") },
+                            label = { Text(if (isArabic) "الإعدادات" else "Settings") },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_settings")
                         )
@@ -495,7 +514,11 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                                     },
                                     onConfirmRestore = { viewModel.confirmRestoreBackup(it) },
                                     onCloseRestorePreview = { viewModel.closeBackupPreview() },
-                                    onConfigurePinLock = { enabled, pin -> viewModel.configurePinLock(enabled, pin) }
+                                    onConfigurePinLock = { enabled, pin -> viewModel.configurePinLock(enabled, pin) },
+                                    isArabic = isArabic,
+                                    isDarkTheme = isDarkTheme,
+                                    onLanguageChange = onLanguageChange,
+                                    onThemeChange = onThemeChange
                                 )
                             }
                         }
