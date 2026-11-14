@@ -462,7 +462,7 @@ fun NoteEditorScreen(
                     colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = MaterialTheme.colorScheme.outline)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = "$searchMatchesCount matches", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                Text(text = novaText(isArabic, "$searchMatchesCount matches", "$searchMatchesCount نتيجة"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             }
         }
 
