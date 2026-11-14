@@ -83,22 +83,13 @@ import com.example.core.BidiTextHelper
 import com.example.core.NoteFilterType
 import com.example.database.FolderEntity
 import com.example.database.NoteEntity
-import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.surface
 import com.example.ui.theme.FolderColorAmber
 import com.example.ui.theme.FolderColorBlue
 import com.example.ui.theme.FolderColorCyan
 import com.example.ui.theme.FolderColorPurple
 import com.example.ui.theme.FolderColorRose
 import com.example.ui.theme.FolderColorTeal
-import com.example.ui.theme.MaterialTheme.colorScheme.primary
-import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
-import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
-import com.example.ui.theme.MaterialTheme.colorScheme.outline
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -818,6 +809,6 @@ fun parseColorHex(hex: String): Color {
     return try {
         Color(android.graphics.Color.parseColor(hex))
     } catch (_: Exception) {
-        MaterialTheme.colorScheme.primary
+        Color(0xFF5145F5)
     }
 }
