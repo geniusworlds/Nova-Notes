@@ -56,17 +56,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.database.TodoEntity
-import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.surface
-import com.example.ui.theme.MaterialTheme.colorScheme.primary
-import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
-import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
-import com.example.ui.theme.MaterialTheme.colorScheme.outline
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 
 @Composable
 fun TodoScreen(
