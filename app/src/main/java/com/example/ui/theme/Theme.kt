@@ -11,6 +11,8 @@ import androidx.compose.ui.unit.dp
 
 val LocalNovaArabic = staticCompositionLocalOf { false }
 
+fun novaText(isArabic: Boolean, english: String, arabic: String): String = if (isArabic) arabic else english
+
 private val NovaDarkColorScheme = darkColorScheme(
     primary = ColorPurple, onPrimary = ColorWhite, primaryContainer = ColorPurpleDeep,
     onPrimaryContainer = ColorWhite, secondary = ColorBlue, onSecondary = ColorWhite,
