@@ -76,6 +76,7 @@ import com.example.core.EditorUiState
 import com.example.core.SaveIndicatorState
 import com.example.database.FolderEntity
 import com.example.ui.theme.PlusJakartaSansFontFamily
+import com.example.ui.theme.LocalNovaArabic
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
@@ -99,6 +100,8 @@ fun NoteEditorScreen(
     onExportSingleNote: (String) -> Unit,
     onShowMessage: (String) -> Unit
 ) {
+    val isArabic = LocalNovaArabic.current
+
     BackHandler(onBack = onBackAndFlush)
 
     val clipboardManager = LocalClipboardManager.current
