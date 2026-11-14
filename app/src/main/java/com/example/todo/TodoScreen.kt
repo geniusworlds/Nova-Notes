@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.database.TodoEntity
 import com.example.ui.theme.LocalNovaArabic
+import com.example.ui.theme.novaText
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 
@@ -109,13 +110,13 @@ fun TodoScreen(
             ) {
                 Column {
                     Text(
-                        text = "TO-DO & TASKS",
+                        text = novaText(isArabic, "TO-DO & TASKS", "المهام وقائمة الأعمال"),
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "${todos.size - completedCount} active • $completedCount completed",
+                        text = novaText(isArabic, "${todos.size - completedCount} active • $completedCount completed", "${todos.size - completedCount} نشطة • $completedCount مكتملة"),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -126,9 +127,9 @@ fun TodoScreen(
                         onClick = onClearCompleted,
                         modifier = Modifier.testTag("clear_completed_todos_button")
                     ) {
-                        Icon(Icons.Default.DeleteSweep, contentDescription = "Clear Completed", tint = StatusError, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.DeleteSweep, contentDescription = novaText(isArabic, "Clear Completed", "مسح المكتملة"), tint = StatusError, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Clear Done", color = StatusError)
+                        Text(novaText(isArabic, "Clear Done", "مسح المكتملة"), color = StatusError)
                     }
                 }
             }
@@ -163,9 +164,9 @@ fun TodoScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("No Tasks in This View", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(isArabic, "No Tasks in This View", "لا توجد مهام في هذا العرض"), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("Add structured tasks, descriptions, and categories.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(novaText(isArabic, "Add structured tasks, descriptions, and categories.", "أضف مهام منظمة وأوصافاً وتصنيفات."), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             } else {
@@ -199,7 +200,7 @@ fun TodoScreen(
                                 ) {
                                     Icon(
                                         imageVector = if (todo.isCompleted) Icons.Default.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
-                                        contentDescription = "Complete Task",
+                                        contentDescription = novaText(isArabic, "Complete Task", "إكمال المهمة"),
                                         tint = if (todo.isCompleted) StatusSuccess else MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -241,10 +242,10 @@ fun TodoScreen(
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     IconButton(onClick = { onMoveOrder(todo, true) }, modifier = Modifier.size(32.dp)) {
-                                        Icon(Icons.Default.ArrowUpward, contentDescription = "Move Up", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.ArrowUpward, contentDescription = novaText(isArabic, "Move Up", "نقل لأعلى"), tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(onClick = { onMoveOrder(todo, false) }, modifier = Modifier.size(32.dp)) {
-                                        Icon(Icons.Default.ArrowDownward, contentDescription = "Move Down", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.ArrowDownward, contentDescription = novaText(isArabic, "Move Down", "نقل لأسفل"), tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(
                                         onClick = {
@@ -253,13 +254,13 @@ fun TodoScreen(
                                         },
                                         modifier = Modifier.size(32.dp)
                                     ) {
-                                        Icon(Icons.Default.Edit, contentDescription = "Edit Task", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.Edit, contentDescription = novaText(isArabic, "Edit Task", "تعديل المهمة"), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(
                                         onClick = { onDeleteTodo(todo) },
                                         modifier = Modifier.size(32.dp).testTag("delete_todo_${todo.id}")
                                     ) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete Task", tint = StatusError, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.Delete, contentDescription = novaText(isArabic, "Delete Task", "حذف المهمة"), tint = StatusError, modifier = Modifier.size(16.dp))
                                     }
                                 }
                             }
@@ -283,9 +284,9 @@ fun TodoScreen(
                 .testTag("add_todo_fab")
         ) {
             Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Add, contentDescription = "Add Task")
+                Icon(Icons.Default.Add, contentDescription = novaText(isArabic, "Add Task", "إضافة مهمة"))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("New Task", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(novaText(isArabic, "New Task", "مهمة جديدة"), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -298,27 +299,27 @@ fun TodoScreen(
         AlertDialog(
             onDismissRequest = { showEditorDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text(if (editingTodo == null) "New Task" else "Edit Task", color = MaterialTheme.colorScheme.onSurface) },
+            title = { Text(if (editingTodo == null) novaText(isArabic, "New Task", "مهمة جديدة") else novaText(isArabic, "Edit Task", "تعديل المهمة"), color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedTextField(
                         value = title,
                         onValueChange = { title = it },
-                        label = { Text("Task Title") },
+                        label = { Text(novaText(isArabic, "Task Title", "عنوان المهمة")) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().testTag("todo_title_input")
                     )
                     OutlinedTextField(
                         value = category,
                         onValueChange = { category = it },
-                        label = { Text("Category (e.g., Work, Personal, Urgent)") },
+                        label = { Text(novaText(isArabic, "Category (e.g., Work, Personal, Urgent)", "التصنيف (مثل: عمل، شخصي، عاجل)")) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().testTag("todo_category_input")
                     )
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description (Optional)") },
+                        label = { Text(novaText(isArabic, "Description (Optional)", "الوصف (اختياري)")) },
                         minLines = 3,
                         modifier = Modifier.fillMaxWidth().testTag("todo_description_input")
                     )
@@ -335,12 +336,12 @@ fun TodoScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("save_todo_button")
                 ) {
-                    Text("Save Task", fontWeight = FontWeight.Bold)
+                    Text(novaText(isArabic, "Save Task", "حفظ المهمة"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showEditorDialog = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
