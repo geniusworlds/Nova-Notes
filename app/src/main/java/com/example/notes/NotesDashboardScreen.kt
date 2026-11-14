@@ -89,6 +89,7 @@ import com.example.ui.theme.FolderColorCyan
 import com.example.ui.theme.FolderColorPurple
 import com.example.ui.theme.FolderColorRose
 import com.example.ui.theme.FolderColorTeal
+import com.example.ui.theme.novaText
 import com.example.ui.theme.StatusError
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -208,19 +209,19 @@ fun NotesDashboardScreen(
                             onClick = onImportNotesDialogRequest,
                             modifier = Modifier.testTag("import_notes_button")
                         ) {
-                            Icon(Icons.Default.FileUpload, contentDescription = "Import Notes", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.FileUpload, contentDescription = novaText(isArabic, "Import Notes", "استيراد الملاحظات"), tint = MaterialTheme.colorScheme.primary)
                         }
                         IconButton(
                             onClick = { showExportDialog = true },
                             modifier = Modifier.testTag("export_notes_button")
                         ) {
-                            Icon(Icons.Default.FileDownload, contentDescription = "Export Notes", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.FileDownload, contentDescription = novaText(isArabic, "Export Notes", "تصدير الملاحظات"), tint = MaterialTheme.colorScheme.primary)
                         }
                         IconButton(
                             onClick = { showCreateFolderDialog = true },
                             modifier = Modifier.testTag("create_folder_button")
                         ) {
-                            Icon(Icons.Default.CreateNewFolder, contentDescription = "Create New Folder", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.CreateNewFolder, contentDescription = novaText(isArabic, "Create New Folder", "إنشاء مجلد جديد"), tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
@@ -241,7 +242,7 @@ fun NotesDashboardScreen(
                     )
                 },
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search Icon", tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Default.Search, contentDescription = novaText(isArabic, "Search Icon", "أيقونة البحث"), tint = MaterialTheme.colorScheme.primary)
                 },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
@@ -249,7 +250,7 @@ fun NotesDashboardScreen(
                             onClick = { onSearchQueryChange("") },
                             modifier = Modifier.testTag("clear_search_button")
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Icon(Icons.Default.Close, contentDescription = novaText(isArabic, "Clear Search", "مسح البحث"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
@@ -420,9 +421,9 @@ fun NotesDashboardScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Create Note")
+                Icon(Icons.Default.Add, contentDescription = novaText(isArabic, "Create Note", "إنشاء ملاحظة"))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("New Note", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                Text(novaText(isArabic, "New Note", "ملاحظة جديدة"), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -431,7 +432,7 @@ fun NotesDashboardScreen(
         FolderEditorDialog(
             initialName = "",
             initialColorHex = "#00E5FF",
-            title = "Create Folder",
+            title = novaText(isArabic, "Create Folder", "إنشاء مجلد"),
             onDismiss = { showCreateFolderDialog = false },
             onConfirm = { name, color ->
                 onCreateFolder(name, color)
@@ -445,7 +446,7 @@ fun NotesDashboardScreen(
         FolderEditorDialog(
             initialName = folder.name,
             initialColorHex = folder.colorHex,
-            title = "Edit Folder",
+            title = novaText(isArabic, "Edit Folder", "تعديل المجلد"),
             onDismiss = { editingFolder = null },
             onConfirm = { name, color ->
                 onRenameFolder(folder, name, color)
@@ -462,7 +463,7 @@ fun NotesDashboardScreen(
         AlertDialog(
             onDismissRequest = { showExportDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Export Displayed Notes (${displayedNotes.size})", color = MaterialTheme.colorScheme.onSurface) },
+            title = { Text(novaText(isArabic, "Export Displayed Notes (${displayedNotes.size})", "تصدير الملاحظات المعروضة (${displayedNotes.size})"), color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
@@ -493,7 +494,7 @@ fun NotesDashboardScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showExportDialog = false }) {
-                    Text("Close", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Close", "إغلاق"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -555,7 +556,7 @@ private fun NoteCardItem(
                             ) {
                                 Icon(
                                     imageVector = if (note.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = "Toggle Favorite",
+                                    contentDescription = novaText(isArabic, "Toggle Favorite", "تبديل المفضلة"),
                                     tint = if (note.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -566,7 +567,7 @@ private fun NoteCardItem(
                             ) {
                                 Icon(
                                     imageVector = if (note.isPinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
-                                    contentDescription = "Pin Note",
+                                    contentDescription = novaText(isArabic, "Pin Note", "تثبيت الملاحظة"),
                                     tint = if (note.isPinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -589,7 +590,7 @@ private fun NoteCardItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.RestoreFromTrash,
-                                    contentDescription = "Restore Note",
+                                    contentDescription = novaText(isArabic, "Restore Note", "استعادة الملاحظة"),
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -600,7 +601,7 @@ private fun NoteCardItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.DeleteForever,
-                                    contentDescription = "Delete Permanently",
+                                    contentDescription = novaText(isArabic, "Delete Permanently", "حذف نهائياً"),
                                     tint = StatusError,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -717,7 +718,7 @@ private fun EmptyNotesView(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Create First Note", fontWeight = FontWeight.Bold)
+                Text(novaText(isArabic, "Create First Note", "إنشاء أول ملاحظة"), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -752,11 +753,11 @@ private fun FolderEditorDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Folder Name") },
+                    label = { Text(novaText(isArabic, "Folder Name", "اسم المجلد")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().testTag("folder_name_input")
                 )
-                Text("Folder Accent Color", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(novaText(isArabic, "Folder Accent Color", "لون تمييز المجلد"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     colorOptions.forEach { (hex, composeColor) ->
                         val selected = colorHex.equals(hex, ignoreCase = true)
@@ -782,15 +783,15 @@ private fun FolderEditorDialog(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("save_folder_button")
             ) {
-                Text("Save", fontWeight = FontWeight.Bold)
+                Text(novaText(isArabic, "Save", "حفظ"), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
             Row {
                 if (onDelete != null) {
-                    TextButton(onClick = onDelete) { Text("Delete", color = StatusError) }
+                    TextButton(onClick = onDelete) { Text(novaText(isArabic, "Delete", "حذف"), color = StatusError) }
                 }
-                TextButton(onClick = onDismiss) { Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                TextButton(onClick = onDismiss) { Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
     )
