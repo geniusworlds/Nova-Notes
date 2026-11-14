@@ -511,9 +511,9 @@ fun NoteEditorScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(text = "${contentFieldValue.text.length} chars", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = "${contentFieldValue.text.lines().size} lines", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = "Cursor: ${contentFieldValue.selection.start}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                    Text(text = novaText(isArabic, "\${contentFieldValue.text.length} chars", "\${contentFieldValue.text.length} حرفاً"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = novaText(isArabic, "\${contentFieldValue.text.lines().size} lines", "\${contentFieldValue.text.lines().size} سطراً"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = novaText(isArabic, "Cursor: \${contentFieldValue.selection.start}", "مؤشر الكتابة: \${contentFieldValue.selection.start}"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
