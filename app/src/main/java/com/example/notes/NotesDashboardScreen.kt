@@ -83,22 +83,22 @@ import com.example.core.BidiTextHelper
 import com.example.core.NoteFilterType
 import com.example.database.FolderEntity
 import com.example.database.NoteEntity
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
+import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.surface
 import com.example.ui.theme.FolderColorAmber
 import com.example.ui.theme.FolderColorBlue
 import com.example.ui.theme.FolderColorCyan
 import com.example.ui.theme.FolderColorPurple
 import com.example.ui.theme.FolderColorRose
 import com.example.ui.theme.FolderColorTeal
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
-import com.example.ui.theme.ObsidianBlack
+import com.example.ui.theme.MaterialTheme.colorScheme.primary
+import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
+import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
-import com.example.ui.theme.SurfaceBorder
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.MaterialTheme.colorScheme.outline
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -128,7 +128,8 @@ fun NotesDashboardScreen(
     onRenameFolder: (FolderEntity, String, String) -> Unit,
     onDeleteFolder: (FolderEntity) -> Unit,
     onExportAllNotesRequest: (String) -> Unit,
-    onImportNotesDialogRequest: () -> Unit
+    onImportNotesDialogRequest: () -> Unit,
+    isArabic: Boolean = false
 ) {
     var showCreateFolderDialog by remember { mutableStateOf(false) }
     var editingFolder by remember { mutableStateOf<FolderEntity?>(null) }
@@ -139,7 +140,7 @@ fun NotesDashboardScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .testTag("notes_dashboard_screen")
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -151,7 +152,7 @@ fun NotesDashboardScreen(
                     .clip(RoundedCornerShape(20.dp))
                     .background(
                         Brush.horizontalGradient(
-                            listOf(CardDarkGray, NovaDeepTeal.copy(alpha = 0.55f), CardDarkGray)
+                            listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f), MaterialTheme.colorScheme.surfaceVariant)
                         )
                     )
             ) {
@@ -164,7 +165,7 @@ fun NotesDashboardScreen(
                     var x = 0f
                     while (x < size.width) {
                         drawLine(
-                            color = NovaCyan.copy(alpha = 0.07f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.07f),
                             start = Offset(x, 0f),
                             end = Offset(x + 24f, size.height),
                             strokeWidth = 1.2f
@@ -172,7 +173,7 @@ fun NotesDashboardScreen(
                         x += step
                     }
                     drawCircle(
-                        color = NovaCyan.copy(alpha = 0.12f),
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
                         radius = size.height * 0.8f,
                         center = Offset(size.width * 0.82f, size.height * 0.25f)
                     )
@@ -192,21 +193,21 @@ fun NotesDashboardScreen(
                                 modifier = Modifier
                                     .size(10.dp)
                                     .clip(CircleShape)
-                                    .background(NovaCyan)
+                                    .background(MaterialTheme.colorScheme.primary)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "NOVA NOTES",
                                 style = MaterialTheme.typography.headlineMedium,
-                                color = TextWhite,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "$allActiveNotesCount Offline Notes • Instant Auto-Save",
+                            text = if (isArabic) "$allActiveNotesCount ملاحظة • حفظ تلقائي فوري" else "$allActiveNotesCount Offline Notes • Instant Auto-Save",
                             style = MaterialTheme.typography.bodySmall,
-                            color = NovaCyan
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
 
@@ -215,19 +216,19 @@ fun NotesDashboardScreen(
                             onClick = onImportNotesDialogRequest,
                             modifier = Modifier.testTag("import_notes_button")
                         ) {
-                            Icon(Icons.Default.FileUpload, contentDescription = "Import Notes", tint = NovaCyan)
+                            Icon(Icons.Default.FileUpload, contentDescription = "Import Notes", tint = MaterialTheme.colorScheme.primary)
                         }
                         IconButton(
                             onClick = { showExportDialog = true },
                             modifier = Modifier.testTag("export_notes_button")
                         ) {
-                            Icon(Icons.Default.FileDownload, contentDescription = "Export Notes", tint = NovaCyan)
+                            Icon(Icons.Default.FileDownload, contentDescription = "Export Notes", tint = MaterialTheme.colorScheme.primary)
                         }
                         IconButton(
                             onClick = { showCreateFolderDialog = true },
                             modifier = Modifier.testTag("create_folder_button")
                         ) {
-                            Icon(Icons.Default.CreateNewFolder, contentDescription = "Create New Folder", tint = NovaCyan)
+                            Icon(Icons.Default.CreateNewFolder, contentDescription = "Create New Folder", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
@@ -242,13 +243,13 @@ fun NotesDashboardScreen(
                     .testTag("global_search_input"),
                 placeholder = {
                     Text(
-                        text = "Search notes, titles, content (العربية / English)…",
+                        text = if (isArabic) "ابحث في الملاحظات والعناوين والمحتوى…" else "Search notes, titles, content (العربية / English)…",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextMuted
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = "Search Icon", tint = NovaCyan)
+                    Icon(Icons.Default.Search, contentDescription = "Search Icon", tint = MaterialTheme.colorScheme.primary)
                 },
                 trailingIcon = {
                     if (searchQuery.isNotEmpty()) {
@@ -256,19 +257,19 @@ fun NotesDashboardScreen(
                             onClick = { onSearchQueryChange("") },
                             modifier = Modifier.testTag("clear_search_button")
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear Search", tint = TextSecondary)
+                            Icon(Icons.Default.Close, contentDescription = "Clear Search", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = NovaCyan,
-                    unfocusedBorderColor = SurfaceBorder,
-                    focusedContainerColor = CardDarkGray,
-                    unfocusedContainerColor = CardDarkGray,
-                    focusedTextColor = TextWhite,
-                    unfocusedTextColor = TextWhite
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                 )
             )
 
@@ -285,7 +286,7 @@ fun NotesDashboardScreen(
                 FilterChip(
                     selected = selectedFilter == NoteFilterType.ALL,
                     onClick = { onSelectFilter(NoteFilterType.ALL, null) },
-                    label = { Text("All Notes ($allActiveNotesCount)") },
+                    label = { Text(if (isArabic) "كل الملاحظات ($allActiveNotesCount)" else "All Notes ($allActiveNotesCount)") },
                     colors = novaFilterChipColors(),
                     modifier = Modifier.testTag("filter_all_notes")
                 )
@@ -293,7 +294,7 @@ fun NotesDashboardScreen(
                 FilterChip(
                     selected = selectedFilter == NoteFilterType.FAVORITES,
                     onClick = { onSelectFilter(NoteFilterType.FAVORITES, null) },
-                    label = { Text("Favorites ($favoritesCount)") },
+                    label = { Text(if (isArabic) "المفضلة ($favoritesCount)" else "Favorites ($favoritesCount)") },
                     leadingIcon = {
                         Icon(Icons.Default.Favorite, contentDescription = null, modifier = Modifier.size(16.dp))
                     },
@@ -304,7 +305,7 @@ fun NotesDashboardScreen(
                 FilterChip(
                     selected = selectedFilter == NoteFilterType.RECENT,
                     onClick = { onSelectFilter(NoteFilterType.RECENT, null) },
-                    label = { Text("Recently Edited") },
+                    label = { Text(if (isArabic) "عُدّلت مؤخراً" else "Recently Edited") },
                     leadingIcon = {
                         Icon(Icons.Default.History, contentDescription = null, modifier = Modifier.size(16.dp))
                     },
@@ -338,7 +339,7 @@ fun NotesDashboardScreen(
                 FilterChip(
                     selected = selectedFilter == NoteFilterType.TRASH,
                     onClick = { onSelectFilter(NoteFilterType.TRASH, null) },
-                    label = { Text("Trash ($trashCount)") },
+                    label = { Text(if (isArabic) "سلة المحذوفات ($trashCount)" else "Trash ($trashCount)") },
                     leadingIcon = {
                         Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
                     },
@@ -356,15 +357,15 @@ fun NotesDashboardScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Notes in Trash can be restored or deleted forever",
+                        text = if (isArabic) "يمكن استعادة الملاحظات أو حذفها نهائياً" else "Notes in Trash can be restored or deleted forever",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     TextButton(
                         onClick = onEmptyTrash,
                         modifier = Modifier.testTag("empty_trash_button")
                     ) {
-                        Text("Empty Trash", color = StatusError)
+                        Text(if (isArabic) "إفراغ السلة" else "Empty Trash", color = StatusError)
                     }
                 }
             }
@@ -415,8 +416,8 @@ fun NotesDashboardScreen(
 
         FloatingActionButton(
             onClick = onCreateNewNote,
-            containerColor = NovaCyan,
-            contentColor = ObsidianBlack,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(18.dp),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -468,14 +469,14 @@ fun NotesDashboardScreen(
     if (showExportDialog) {
         AlertDialog(
             onDismissRequest = { showExportDialog = false },
-            containerColor = CardElevatedGray,
-            title = { Text("Export Displayed Notes (${displayedNotes.size})", color = TextWhite) },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text("Export Displayed Notes (${displayedNotes.size})", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         "Choose an offline export format (preserves Arabic & English UTF-8):",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     listOf(
                         "TXT" to "Plain Text (.txt)",
@@ -491,16 +492,16 @@ fun NotesDashboardScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("export_format_$fmt"),
-                            border = BorderStroke(1.dp, NovaCyan.copy(alpha = 0.6f))
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f))
                         ) {
-                            Text(label, color = NovaCyan)
+                            Text(label, color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showExportDialog = false }) {
-                    Text("Close", color = TextSecondary)
+                    Text("Close", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -532,10 +533,10 @@ private fun NoteCardItem(
             .combinedClickable(onClick = onClick, onLongClick = onTogglePin)
             .testTag("note_card_${note.id}"),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = if (note.isPinned) CardElevatedGray else CardDarkGray),
+        colors = CardDefaults.cardColors(containerColor = if (note.isPinned) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant),
         border = BorderStroke(
             width = if (note.isPinned) 1.5.dp else 1.dp,
-            color = if (note.isPinned) NovaCyan.copy(alpha = 0.7f) else SurfaceBorder
+            color = if (note.isPinned) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.outline
         )
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
@@ -548,7 +549,7 @@ private fun NoteCardItem(
                     Text(
                         text = note.title.ifBlank { "Untitled Note" },
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (note.title.isBlank()) TextMuted else TextWhite,
+                        color = if (note.title.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
@@ -563,7 +564,7 @@ private fun NoteCardItem(
                                 Icon(
                                     imageVector = if (note.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = "Toggle Favorite",
-                                    tint = if (note.isFavorite) NovaCyan else TextMuted,
+                                    tint = if (note.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -574,7 +575,7 @@ private fun NoteCardItem(
                                 Icon(
                                     imageVector = if (note.isPinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
                                     contentDescription = "Pin Note",
-                                    tint = if (note.isPinned) NovaCyan else TextMuted,
+                                    tint = if (note.isPinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -585,7 +586,7 @@ private fun NoteCardItem(
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Move to Trash",
-                                    tint = TextMuted,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -597,7 +598,7 @@ private fun NoteCardItem(
                                 Icon(
                                     imageVector = Icons.Default.RestoreFromTrash,
                                     contentDescription = "Restore Note",
-                                    tint = NovaCyan,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -621,7 +622,7 @@ private fun NoteCardItem(
                     Text(
                         text = note.content,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -656,18 +657,18 @@ private fun NoteCardItem(
                             }
                         }
                         if (isRtl) {
-                            Surface(color = NovaDeepTeal.copy(alpha = 0.5f), shape = RoundedCornerShape(6.dp)) {
+                            Surface(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f), shape = RoundedCornerShape(6.dp)) {
                                 Text(
                                     text = "RTL",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = NovaCyan,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                 )
                             }
                         }
                     }
 
-                    Text(text = formattedDate, style = MaterialTheme.typography.labelSmall, color = TextMuted)
+                    Text(text = formattedDate, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -687,12 +688,12 @@ private fun EmptyNotesView(
     ) {
         Surface(
             shape = CircleShape,
-            color = CardElevatedGray,
-            border = BorderStroke(1.dp, NovaCyan.copy(alpha = 0.35f)),
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
             modifier = Modifier.size(72.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Outlined.Description, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(34.dp))
+                Icon(Icons.Outlined.Description, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(34.dp))
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -703,7 +704,7 @@ private fun EmptyNotesView(
                 else -> "No Notes Yet"
             },
             style = MaterialTheme.typography.titleLarge,
-            color = TextWhite
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
@@ -713,13 +714,13 @@ private fun EmptyNotesView(
                 else -> "Create your first offline note with continuous automatic saving."
             },
             style = MaterialTheme.typography.bodyMedium,
-            color = TextSecondary
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         if (!isTrash && !hasSearchQuery) {
             Spacer(modifier = Modifier.height(18.dp))
             Button(
                 onClick = onCreateNewNote,
-                colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("empty_state_create_note_button")
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
@@ -752,8 +753,8 @@ private fun FolderEditorDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = CardElevatedGray,
-        title = { Text(title, color = TextWhite) },
+        containerColor = MaterialTheme.colorScheme.surface,
+        title = { Text(title, color = MaterialTheme.colorScheme.onSurface) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
@@ -763,7 +764,7 @@ private fun FolderEditorDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().testTag("folder_name_input")
                 )
-                Text("Folder Accent Color", style = MaterialTheme.typography.labelLarge, color = TextSecondary)
+                Text("Folder Accent Color", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     colorOptions.forEach { (hex, composeColor) ->
                         val selected = colorHex.equals(hex, ignoreCase = true)
@@ -776,7 +777,7 @@ private fun FolderEditorDialog(
                             contentAlignment = Alignment.Center
                         ) {
                             if (selected) {
-                                Box(modifier = Modifier.size(14.dp).clip(CircleShape).background(ObsidianBlack))
+                                Box(modifier = Modifier.size(14.dp).clip(CircleShape).background(MaterialTheme.colorScheme.background))
                             }
                         }
                     }
@@ -786,7 +787,7 @@ private fun FolderEditorDialog(
         confirmButton = {
             Button(
                 onClick = { if (name.isNotBlank()) onConfirm(name, colorHex) },
-                colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("save_folder_button")
             ) {
                 Text("Save", fontWeight = FontWeight.Bold)
@@ -797,7 +798,7 @@ private fun FolderEditorDialog(
                 if (onDelete != null) {
                     TextButton(onClick = onDelete) { Text("Delete", color = StatusError) }
                 }
-                TextButton(onClick = onDismiss) { Text("Cancel", color = TextSecondary) }
+                TextButton(onClick = onDismiss) { Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
         }
     )
@@ -805,18 +806,18 @@ private fun FolderEditorDialog(
 
 @Composable
 private fun novaFilterChipColors() = FilterChipDefaults.filterChipColors(
-    containerColor = CardDarkGray,
-    labelColor = TextSecondary,
-    iconColor = NovaCyan,
-    selectedContainerColor = NovaDeepTeal,
-    selectedLabelColor = NovaCyan,
-    selectedLeadingIconColor = NovaCyan
+    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    iconColor = MaterialTheme.colorScheme.primary,
+    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+    selectedLabelColor = MaterialTheme.colorScheme.primary,
+    selectedLeadingIconColor = MaterialTheme.colorScheme.primary
 )
 
 fun parseColorHex(hex: String): Color {
     return try {
         Color(android.graphics.Color.parseColor(hex))
     } catch (_: Exception) {
-        NovaCyan
+        MaterialTheme.colorScheme.primary
     }
 }
