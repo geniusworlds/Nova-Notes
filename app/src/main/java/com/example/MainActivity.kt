@@ -431,7 +431,8 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                                     },
                                     onImportNotesDialogRequest = {
                                         showImportTextDialog = "NOTES"
-                                    }
+                                    },
+                                    isArabic = isArabic
                                 )
                             }
 
