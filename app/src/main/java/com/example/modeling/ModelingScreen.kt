@@ -76,19 +76,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ModelingUiState
 import com.example.database.ModelingTemplateEntity
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
+import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.surface
 import com.example.ui.theme.JetBrainsMonoFontFamily
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
-import com.example.ui.theme.ObsidianBlack
+import com.example.ui.theme.MaterialTheme.colorScheme.primary
+import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
+import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
-import com.example.ui.theme.SurfaceBorder
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.MaterialTheme.colorScheme.outline
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 
 @Composable
 fun ModelingScreen(
@@ -121,14 +121,14 @@ fun ModelingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .testTag("modeling_screen")
     ) {
         // Top Bar: Modeling Title, Session Actions, Template Selector
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CardDarkGray)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(horizontal = 16.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -137,31 +137,31 @@ fun ModelingScreen(
                 Text(
                     text = "MODELING ENGINE",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TextWhite,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Valid: ${result.validCount} • Invalid: ${result.invalidCount} • Dup: ${result.duplicateCount} • Groups: ${result.groups.size}",
                     style = MaterialTheme.typography.labelSmall,
-                    color = NovaCyan
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(
                     onClick = onStartNewSession,
-                    border = BorderStroke(1.dp, SurfaceBorder),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_new_session_button")
                 ) {
-                    Icon(Icons.Default.Refresh, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(15.dp))
+                    Icon(Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(15.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Reset", style = MaterialTheme.typography.labelSmall, color = TextSecondary)
+                    Text("Reset", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
                 Button(
                     onClick = onProcessNow,
-                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_process_button")
                 ) {
@@ -176,13 +176,13 @@ fun ModelingScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CardElevatedGray)
+                .background(MaterialTheme.colorScheme.surface)
                 .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 14.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Template:", style = MaterialTheme.typography.labelLarge, color = TextSecondary)
+            Text("Template:", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             templates.forEach { tmpl ->
                 val selected = activeTemplate.id == tmpl.id && activeTemplate.name == tmpl.name
                 FilterChip(
@@ -190,13 +190,13 @@ fun ModelingScreen(
                     onClick = { onSelectTemplate(tmpl) },
                     label = { Text("${tmpl.name} (${tmpl.category})") },
                     leadingIcon = if (tmpl.isDefault) {
-                        { Icon(Icons.Default.Star, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(14.dp)) }
+                        { Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp)) }
                     } else null,
                     colors = FilterChipDefaults.filterChipColors(
-                        containerColor = CardDarkGray,
-                        labelColor = TextSecondary,
-                        selectedContainerColor = NovaDeepTeal,
-                        selectedLabelColor = NovaCyan
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier.testTag("select_template_${tmpl.id}")
                 )
@@ -222,7 +222,7 @@ fun ModelingScreen(
                     Text(
                         text = result.templateValidationError,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextWhite
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -231,13 +231,13 @@ fun ModelingScreen(
         // Sub-navigation Tabs: 0 = Input & Config, 1 = Live Preview & Diagnostics, 2 = Custom Template Builder
         TabRow(
             selectedTabIndex = modelingState.activeSubTab,
-            containerColor = CardDarkGray,
-            contentColor = NovaCyan,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.primary,
             indicator = { tabPositions ->
                 if (modelingState.activeSubTab < tabPositions.size) {
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[modelingState.activeSubTab]),
-                        color = NovaCyan
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -294,7 +294,7 @@ fun ModelingScreen(
                             onEditSingleRecord = { editingLineRecord = it }
                         )
                     }
-                    HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp), color = SurfaceBorder)
+                    HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp), color = MaterialTheme.colorScheme.outline)
                     Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                         ModelingLivePreviewPanel(
                             result = result,
@@ -353,8 +353,8 @@ fun ModelingScreen(
         var updatedLine by remember(rec) { mutableStateOf(rec.rawLine) }
         AlertDialog(
             onDismissRequest = { editingLineRecord = null },
-            containerColor = CardElevatedGray,
-            title = { Text("Edit Record Line #${rec.originalIndex}", color = TextWhite) },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text("Edit Record Line #${rec.originalIndex}", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 OutlinedTextField(
                     value = updatedLine,
@@ -369,14 +369,14 @@ fun ModelingScreen(
                         onSingleRecordEdited(rec.originalIndex, updatedLine)
                         editingLineRecord = null
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background)
                 ) {
                     Text("Update & Reprocess", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { editingLineRecord = null }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -413,7 +413,7 @@ private fun ModelingInputAndConfigPanel(
             Text(
                 text = "Structured Input (${result.totalInputLines} lines)",
                 style = MaterialTheme.typography.titleSmall,
-                color = TextWhite
+                color = MaterialTheme.colorScheme.onSurface
             )
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 OutlinedButton(
@@ -421,9 +421,9 @@ private fun ModelingInputAndConfigPanel(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_paste_button")
                 ) {
-                    Icon(Icons.Default.ContentPaste, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.ContentPaste, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Paste", style = MaterialTheme.typography.labelSmall, color = NovaCyan)
+                    Text("Paste", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
                 OutlinedButton(
                     onClick = {
@@ -433,7 +433,7 @@ private fun ModelingInputAndConfigPanel(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_load_50_button")
                 ) {
-                    Text("Load 50", style = MaterialTheme.typography.labelSmall, color = NovaCyan)
+                    Text("Load 50", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
                 OutlinedButton(
                     onClick = { onInputChanged("") },
@@ -452,12 +452,12 @@ private fun ModelingInputAndConfigPanel(
             placeholder = {
                 Text(
                     "Enter structured records (e.g. email:password), one per line…",
-                    color = TextMuted
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 fontFamily = JetBrainsMonoFontFamily,
-                color = TextWhite,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 13.sp
             ),
             minLines = 7,
@@ -466,17 +466,17 @@ private fun ModelingInputAndConfigPanel(
                 .fillMaxWidth()
                 .testTag("modeling_raw_input"),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = NovaCyan,
-                unfocusedBorderColor = SurfaceBorder,
-                focusedContainerColor = CardDarkGray,
-                unfocusedContainerColor = CardDarkGray
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
             )
         )
 
         // Highlighted Invalid & Duplicate Records Inspector (allows individual record editing)
         if (flaggedRecords.isNotEmpty()) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = CardElevatedGray),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 border = BorderStroke(1.dp, StatusWarning.copy(alpha = 0.6f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -518,12 +518,12 @@ private fun ModelingInputAndConfigPanel(
 
         // Configuration Controls Card: Date, Sorting, Grouping, Numbering
         Card(
-            colors = CardDefaults.cardColors(containerColor = CardDarkGray),
-            border = BorderStroke(1.dp, SurfaceBorder),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("Live Modeling Configuration", style = MaterialTheme.typography.titleSmall, color = NovaCyan)
+                Text("Live Modeling Configuration", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
 
                 // Date Configuration Row
                 Row(
@@ -549,8 +549,8 @@ private fun ModelingInputAndConfigPanel(
                             Text(if (tmpl.dateMode.uppercase() == "INCREMENT_DAY") "+1 Day / Group" else "Fixed Date")
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = NovaDeepTeal,
-                            selectedLabelColor = NovaCyan
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.primary
                         ),
                         modifier = Modifier.testTag("modeling_date_mode_toggle")
                     )
@@ -560,7 +560,7 @@ private fun ModelingInputAndConfigPanel(
                 Text(
                     "Group Date Header & Single-List Output Options",
                     style = MaterialTheme.typography.labelLarge,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
@@ -572,10 +572,10 @@ private fun ModelingInputAndConfigPanel(
                         onClick = { onUpdateConfig { it.copy(showDateOnEveryGroup = !it.showDateOnEveryGroup) } },
                         label = { Text("Date [ ${tmpl.startDateStr} ] on Every Group") },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = CardElevatedGray,
-                            labelColor = TextSecondary,
-                            selectedContainerColor = NovaDeepTeal,
-                            selectedLabelColor = NovaCyan
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.primary
                         ),
                         modifier = Modifier.testTag("modeling_date_every_group_toggle")
                     )
@@ -585,17 +585,17 @@ private fun ModelingInputAndConfigPanel(
                         onClick = { onUpdateConfig { it.copy(combineGroupsIntoOneList = !it.combineGroupsIntoOneList) } },
                         label = { Text("Groups on One List") },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = CardElevatedGray,
-                            labelColor = TextSecondary,
-                            selectedContainerColor = NovaDeepTeal,
-                            selectedLabelColor = NovaCyan
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.primary
                         ),
                         modifier = Modifier.testTag("modeling_combine_one_list_toggle")
                     )
                 }
 
                 // Sorting Controls
-                Text("Record Ordering & Sorting", style = MaterialTheme.typography.labelLarge, color = TextSecondary)
+                Text("Record Ordering & Sorting", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -611,8 +611,8 @@ private fun ModelingInputAndConfigPanel(
                             onClick = { onUpdateConfig { it.copy(sortMode = mode) } },
                             label = { Text(label) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NovaDeepTeal,
-                                selectedLabelColor = NovaCyan
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             modifier = Modifier.testTag("modeling_sort_$mode")
                         )
@@ -718,30 +718,30 @@ private fun ModelingInputAndConfigPanel(
                         Checkbox(
                             checked = tmpl.useArabicNumerals,
                             onCheckedChange = { c -> onUpdateConfig { it.copy(useArabicNumerals = c) } },
-                            colors = CheckboxDefaults.colors(checkedColor = NovaCyan),
+                            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_arabic_numerals_checkbox")
                         )
-                        Text("Arabic Numerals (١٢٣)", style = MaterialTheme.typography.bodySmall, color = TextWhite)
+                        Text("Arabic Numerals (١٢٣)", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = tmpl.removeEmptyLines,
                             onCheckedChange = { c -> onUpdateConfig { it.copy(removeEmptyLines = c) } },
-                            colors = CheckboxDefaults.colors(checkedColor = NovaCyan),
+                            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_remove_empty_checkbox")
                         )
-                        Text("Ignore Empty Lines", style = MaterialTheme.typography.bodySmall, color = TextWhite)
+                        Text("Ignore Empty Lines", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = tmpl.restartNumberingPerGroup,
                             onCheckedChange = { c -> onUpdateConfig { it.copy(restartNumberingPerGroup = c) } },
-                            colors = CheckboxDefaults.colors(checkedColor = NovaCyan),
+                            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_restart_numbering_checkbox")
                         )
-                        Text("Restart # Per Group", style = MaterialTheme.typography.bodySmall, color = TextWhite)
+                        Text("Restart # Per Group", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
@@ -774,7 +774,7 @@ private fun ModelingLivePreviewPanel(
             Text(
                 text = "Live Output (${result.groups.size} groups • ${result.processingTimeMs} ms)",
                 style = MaterialTheme.typography.titleSmall,
-                color = NovaCyan
+                color = MaterialTheme.colorScheme.primary
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -783,9 +783,9 @@ private fun ModelingLivePreviewPanel(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_copy_all_button")
                 ) {
-                    Icon(Icons.Default.ContentCopy, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(14.dp))
+                    Icon(Icons.Default.ContentCopy, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Copy All", style = MaterialTheme.typography.labelSmall, color = NovaCyan)
+                    Text("Copy All", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
 
                 OutlinedButton(
@@ -804,18 +804,18 @@ private fun ModelingLivePreviewPanel(
                         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                         modifier = Modifier.testTag("modeling_export_button")
                     ) {
-                        Icon(Icons.Default.FileDownload, contentDescription = null, tint = TextWhite, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.FileDownload, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Export", style = MaterialTheme.typography.labelSmall, color = TextWhite)
+                        Text("Export", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                     DropdownMenu(
                         expanded = showExportMenu,
                         onDismissRequest = { onToggleExportMenu(false) },
-                        containerColor = CardElevatedGray
+                        containerColor = MaterialTheme.colorScheme.surface
                     ) {
                         listOf("TXT", "PDF", "JSON", "CSV").forEach { fmt ->
                             DropdownMenuItem(
-                                text = { Text("Export Result as $fmt", color = TextWhite) },
+                                text = { Text("Export Result as $fmt", color = MaterialTheme.colorScheme.onSurface) },
                                 onClick = {
                                     onToggleExportMenu(false)
                                     onExportFormat(fmt)
@@ -834,7 +834,7 @@ private fun ModelingLivePreviewPanel(
                 Text(
                     text = "Enter records in the Input panel to see real-time formatted output.",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         } else {
@@ -848,8 +848,8 @@ private fun ModelingLivePreviewPanel(
             ) {
                 items(result.groups, key = { it.groupNumber }) { group ->
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = CardDarkGray),
-                        border = BorderStroke(1.dp, NovaCyan.copy(alpha = 0.35f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -864,7 +864,7 @@ private fun ModelingLivePreviewPanel(
                                 Text(
                                     text = "Group #${group.groupNumber} • Date: ${group.dateString}",
                                     style = MaterialTheme.typography.labelLarge,
-                                    color = NovaCyan
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                                 IconButton(
                                     onClick = { onCopyGroup(group) },
@@ -875,7 +875,7 @@ private fun ModelingLivePreviewPanel(
                                     Icon(
                                         imageVector = Icons.Default.ContentCopy,
                                         contentDescription = "Copy Group",
-                                        tint = TextSecondary,
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(15.dp)
                                     )
                                 }
@@ -885,7 +885,7 @@ private fun ModelingLivePreviewPanel(
                                 text = group.formattedText,
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontFamily = JetBrainsMonoFontFamily,
-                                    color = TextWhite,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     lineHeight = 18.sp
                                 )
                             )
@@ -922,19 +922,19 @@ private fun CustomTemplateBuilderPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("Custom Template Visual Builder", style = MaterialTheme.typography.titleMedium, color = TextWhite)
+                Text("Custom Template Visual Builder", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                 Text(
                     "Click any placeholder chip below to insert into patterns",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 IconButton(onClick = onImportTemplatesDialogRequest, modifier = Modifier.testTag("import_templates_button")) {
-                    Icon(Icons.Default.FileUpload, contentDescription = "Import Templates", tint = NovaCyan)
+                    Icon(Icons.Default.FileUpload, contentDescription = "Import Templates", tint = MaterialTheme.colorScheme.primary)
                 }
                 IconButton(onClick = onExportTemplatesJson, modifier = Modifier.testTag("export_templates_button")) {
-                    Icon(Icons.Default.FileDownload, contentDescription = "Export Templates", tint = NovaCyan)
+                    Icon(Icons.Default.FileDownload, contentDescription = "Export Templates", tint = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -954,13 +954,13 @@ private fun CustomTemplateBuilderPanel(
                             )
                         }
                     },
-                    color = NovaDeepTeal,
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = token,
                         style = MaterialTheme.typography.labelSmall,
-                        color = NovaCyan,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
                     )
                 }
@@ -992,8 +992,8 @@ private fun CustomTemplateBuilderPanel(
                     onClick = { onUpdateConfig { it.copy(templateType = type) } },
                     label = { Text(type) },
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = NovaDeepTeal,
-                        selectedLabelColor = NovaCyan
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedLabelColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
@@ -1062,7 +1062,7 @@ private fun CustomTemplateBuilderPanel(
                     }
                     onSaveCustomTemplate(toSave)
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("builder_save_template_button")
             ) {
                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -1083,27 +1083,27 @@ private fun CustomTemplateBuilderPanel(
                 },
                 modifier = Modifier.testTag("builder_new_template_button")
             ) {
-                Icon(Icons.Default.Add, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Create New", color = NovaCyan)
+                Text("Create New", color = MaterialTheme.colorScheme.primary)
             }
 
             OutlinedButton(
                 onClick = { onDuplicateTemplate(activeTemplate) },
                 modifier = Modifier.testTag("builder_duplicate_template_button")
             ) {
-                Icon(Icons.Default.ContentCopy, contentDescription = null, tint = TextWhite, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.ContentCopy, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Duplicate", color = TextWhite)
+                Text("Duplicate", color = MaterialTheme.colorScheme.onSurface)
             }
 
             OutlinedButton(
                 onClick = { onSetDefaultTemplate(activeTemplate) },
                 modifier = Modifier.testTag("builder_set_default_button")
             ) {
-                Icon(Icons.Default.Star, contentDescription = null, tint = NovaCyan, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text("Set Default", color = NovaCyan)
+                Text("Set Default", color = MaterialTheme.colorScheme.primary)
             }
 
             if (!activeTemplate.isBuiltIn) {
