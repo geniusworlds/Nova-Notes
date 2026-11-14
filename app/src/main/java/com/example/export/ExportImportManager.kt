@@ -18,9 +18,6 @@ object ExportImportManager {
 
     private val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.US)
 
-    /**
-     * Formats a single Note or multiple Notes into plain UTF-8 TXT preserving Arabic & English text.
-     */
     fun exportNotesToTxt(notes: List<NoteEntity>): String {
         if (notes.size == 1) {
             val n = notes.first()
@@ -43,9 +40,6 @@ object ExportImportManager {
         }
     }
 
-    /**
-     * Exports notes to a structured JSON array.
-     */
     fun exportNotesToJson(notes: List<NoteEntity>): String {
         val array = JSONArray()
         for (n in notes) {
@@ -70,9 +64,6 @@ object ExportImportManager {
         }.toString(2)
     }
 
-    /**
-     * Exports notes or Modeling records to RFC-4180 compliant CSV with UTF-8 BOM for Arabic/English spreadsheet compatibility.
-     */
     fun exportNotesToCsv(notes: List<NoteEntity>): String {
         return buildString {
             append("ID,Title,Content,Pinned,Favorite,Direction,UpdatedAt\n")
@@ -122,75 +113,106 @@ object ExportImportManager {
         }.toString(2)
     }
 
-    /**
-     * Generates a multi-page PDF document byte array from title and body text using Android's native PdfDocument.
-     */
     fun generatePdfBytes(title: String, bodyText: String): ByteArray {
-        val document = PdfDocument()
-        val pageWidth = 595 // A4 width in points
-        val pageHeight = 842 // A4 height in points
-        val margin = 40f
-        val usableWidth = pageWidth - (margin * 2)
+        return try {
+            val document = PdfDocument()
+            val pageWidth = 595
+            val pageHeight = 842
+            val margin = 40f
+            val usableWidth = pageWidth - (margin * 2)
 
-        val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.BLACK
-            textSize = 18f
-            isFakeBoldText = true
+            val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.BLACK
+                textSize = 18f
+                isFakeBoldText = true
+            }
+            val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.DKGRAY
+                textSize = 11.5f
+            }
+
+            val wrappedLines = ArrayList<String>()
+            for (paragraph in bodyText.split("\n")) {
+                if (paragraph.isEmpty()) {
+                    wrappedLines.add("")
+                    continue
+                }
+                var start = 0
+                while (start < paragraph.length) {
+                    val count = bodyPaint.breakText(paragraph, start, paragraph.length, true, usableWidth, null)
+                        .let { if (it <= 0) (paragraph.length - start).coerceAtMost(80) else it }
+                    if (count <= 0) break
+                    wrappedLines.add(paragraph.substring(start, start + count))
+                    start += count
+                }
+            }
+
+            var lineIdx = 0
+            var pageNumber = 1
+
+            do {
+                val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+                val page = document.startPage(pageInfo)
+                val canvas: Canvas = page.canvas
+                var y = margin + 16f
+
+                if (pageNumber == 1 && title.isNotBlank()) {
+                    canvas.drawText(title.take(65), margin, y, titlePaint)
+                    y += 28f
+                }
+
+                val lineHeight = 16f
+                while (lineIdx < wrappedLines.size && y < pageHeight - margin) {
+                    canvas.drawText(wrappedLines[lineIdx], margin, y, bodyPaint)
+                    y += lineHeight
+                    lineIdx++
+                }
+
+                document.finishPage(page)
+                pageNumber++
+            } while (lineIdx < wrappedLines.size)
+
+            val out = ByteArrayOutputStream()
+            document.writeTo(out)
+            document.close()
+            val bytes = out.toByteArray()
+            if (bytes.isNotEmpty()) bytes else buildPortablePdf14Bytes(title, bodyText)
+        } catch (_: Throwable) {
+            buildPortablePdf14Bytes(title, bodyText)
         }
-        val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.DKGRAY
-            textSize = 11.5f
-        }
-
-        val wrappedLines = ArrayList<String>()
-        for (paragraph in bodyText.split("\n")) {
-            if (paragraph.isEmpty()) {
-                wrappedLines.add("")
-                continue
-            }
-            var start = 0
-            while (start < paragraph.length) {
-                val count = bodyPaint.breakText(paragraph, start, paragraph.length, true, usableWidth, null)
-                if (count <= 0) break
-                wrappedLines.add(paragraph.substring(start, start + count))
-                start += count
-            }
-        }
-
-        var lineIdx = 0
-        var pageNumber = 1
-
-        do {
-            val pageInfo = PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
-            val page = document.startPage(pageInfo)
-            val canvas: Canvas = page.canvas
-            var y = margin + 16f
-
-            if (pageNumber == 1 && title.isNotBlank()) {
-                canvas.drawText(title.take(65), margin, y, titlePaint)
-                y += 28f
-            }
-
-            val lineHeight = 16f
-            while (lineIdx < wrappedLines.size && y < pageHeight - margin) {
-                canvas.drawText(wrappedLines[lineIdx], margin, y, bodyPaint)
-                y += lineHeight
-                lineIdx++
-            }
-
-            document.finishPage(page)
-            pageNumber++
-        } while (lineIdx < wrappedLines.size)
-
-        val out = ByteArrayOutputStream()
-        document.writeTo(out)
-        document.close()
-        return out.toByteArray()
     }
 
-    /**
-     * Parses imported TXT, JSON, or CSV content into NoteEntity objects without overwriting existing notes.
-     */
+    private fun buildPortablePdf14Bytes(title: String, bodyText: String): ByteArray {
+        val escapedLines = (listOf(title) + bodyText.lines()).map {
+            it.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+        }
+        val streamContent = buildString {
+            append("BT\n/F1 12 Tf\n50 780 Td\n15 TL\n")
+            escapedLines.forEach { line ->
+                append("(").append(line).append(") Tj T*\n")
+            }
+            append("ET\n")
+        }
+        val pdfText = """
+            %PDF-1.4
+            1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+            2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+            3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+            4 0 obj << /Length ${streamContent.length} >>
+            stream
+            $streamContent
+            endstream
+            endobj
+            5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+            xref
+            0 6
+            0000000000 65535 f 
+            trailer << /Size 6 /Root 1 0 R >>
+            %%EOF
+        """.trimIndent()
+        return pdfText.toByteArray(Charsets.UTF_8)
+    }
+
     fun parseImportedNotes(rawContent: String, formatHint: String = "AUTO"): List<NoteEntity> {
         val trimmed = rawContent.trim()
         if (trimmed.isEmpty()) throw IllegalArgumentException("Imported file is empty.")
@@ -213,7 +235,7 @@ object ExportImportManager {
                     val obj = notesArr.getJSONObject(i)
                     list.add(
                         NoteEntity(
-                            id = 0L, // Auto-generate new ID so we never silently overwrite existing notes
+                            id = 0L,
                             title = obj.optString("title", "Imported Note"),
                             content = obj.optString("content", ""),
                             isPinned = obj.optBoolean("isPinned", false),
@@ -226,17 +248,12 @@ object ExportImportManager {
             }
 
             "CSV" -> {
-                val lines = trimmed.lines().filter { it.isNotBlank() }
-                if (lines.size <= 1) throw IllegalArgumentException("CSV file contains no data rows.")
-                lines.drop(1).map { row ->
-                    val cols = parseCsvLine(row)
+                val rows = parseCsvRecords(trimmed)
+                if (rows.size <= 1) throw IllegalArgumentException("CSV file contains no data rows.")
+                rows.drop(1).map { cols ->
                     val title = cols.getOrNull(1)?.ifBlank { "Imported CSV Note" } ?: "Imported CSV Note"
-                    val content = cols.getOrNull(2) ?: row
-                    NoteEntity(
-                        id = 0L,
-                        title = title,
-                        content = content
-                    )
+                    val content = cols.getOrNull(2) ?: cols.joinToString(",")
+                    NoteEntity(id = 0L, title = title, content = content)
                 }
             }
 
@@ -244,20 +261,11 @@ object ExportImportManager {
                 val lines = rawContent.lines()
                 val firstLine = lines.firstOrNull()?.trim().orEmpty()
                 val title = firstLine.take(60).ifBlank { "Imported TXT Note" }
-                listOf(
-                    NoteEntity(
-                        id = 0L,
-                        title = title,
-                        content = rawContent
-                    )
-                )
+                listOf(NoteEntity(id = 0L, title = title, content = rawContent))
             }
         }
     }
 
-    /**
-     * Exports custom or selected Modeling templates as a portable JSON configuration.
-     */
     fun exportTemplatesToJson(
         templates: List<ModelingTemplateEntity>,
         serializeOne: (ModelingTemplateEntity) -> JSONObject
@@ -287,11 +295,7 @@ object ExportImportManager {
 
         val result = ArrayList<ModelingTemplateEntity>(arr.length())
         for (i in 0 until arr.length()) {
-            val tmpl = parseOne(arr.getJSONObject(i)).copy(
-                id = 0L,
-                isBuiltIn = false,
-                isDefault = false
-            )
+            val tmpl = parseOne(arr.getJSONObject(i)).copy(id = 0L, isBuiltIn = false, isDefault = false)
             result.add(tmpl)
         }
         return result
@@ -302,28 +306,43 @@ object ExportImportManager {
         return "\"$escaped\""
     }
 
-    private fun parseCsvLine(line: String): List<String> {
-        val result = ArrayList<String>()
-        val current = StringBuilder()
+    private fun parseCsvRecords(csvText: String): List<List<String>> {
+        val records = ArrayList<List<String>>()
+        var currentRow = ArrayList<String>()
+        val currentField = StringBuilder()
         var inQuotes = false
         var i = 0
-        while (i < line.length) {
-            val c = line[i]
+        while (i < csvText.length) {
+            val c = csvText[i]
             when {
-                c == '"' && inQuotes && i + 1 < line.length && line[i + 1] == '"' -> {
-                    current.append('"')
+                c == '"' && inQuotes && i + 1 < csvText.length && csvText[i + 1] == '"' -> {
+                    currentField.append('"')
                     i++
                 }
                 c == '"' -> inQuotes = !inQuotes
                 c == ',' && !inQuotes -> {
-                    result.add(current.toString())
-                    current.clear()
+                    currentRow.add(currentField.toString())
+                    currentField.clear()
                 }
-                else -> current.append(c)
+                (c == '\n' || c == '\r') && !inQuotes -> {
+                    if (c == '\r' && i + 1 < csvText.length && csvText[i + 1] == '\n') {
+                        i++
+                    }
+                    currentRow.add(currentField.toString())
+                    currentField.clear()
+                    if (currentRow.any { it.isNotEmpty() }) {
+                        records.add(currentRow)
+                    }
+                    currentRow = ArrayList()
+                }
+                else -> currentField.append(c)
             }
             i++
         }
-        result.add(current.toString())
-        return result
+        currentRow.add(currentField.toString())
+        if (currentRow.any { it.isNotEmpty() }) {
+            records.add(currentRow)
+        }
+        return records
     }
 }

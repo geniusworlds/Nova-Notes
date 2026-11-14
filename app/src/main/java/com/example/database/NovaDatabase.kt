@@ -12,7 +12,7 @@ import androidx.room.RoomDatabase
         TodoEntity::class,
         ModelingTemplateEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class NovaDatabase : RoomDatabase() {
@@ -32,7 +32,7 @@ abstract class NovaDatabase : RoomDatabase() {
                     NovaDatabase::class.java,
                     "nova_notes.db"
                 )
-                    .fallbackToDestructiveMigration(false)
+                    .fallbackToDestructiveMigration(true)
                     .build()
                     .also { INSTANCE = it }
             }

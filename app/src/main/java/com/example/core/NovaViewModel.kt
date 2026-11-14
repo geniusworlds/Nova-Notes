@@ -62,8 +62,8 @@ data class EditorUiState(
     val isPinned: Boolean = false,
     val isFavorite: Boolean = false,
     val isTrashed: Boolean = false,
-    val textDirection: String = "AUTO", // AUTO, LTR, RTL
-    val textAlignment: String = "START", // START, CENTER, END
+    val textDirection: String = "AUTO",
+    val textAlignment: String = "START",
     val cursorPosition: Int = 0,
     val selectionEnd: Int = 0,
     val verticalScrollOffset: Int = 0,
@@ -82,7 +82,7 @@ data class ModelingUiState(
         rawInput = "admin@nova.io:Sup3rS3cur3!\nuser1@nova.io:Pass#1001\nuser2@nova.io:Pass#1002\nuser3@nova.io:Pass#1003\nlead@nova.io:LeadKey#99\ndev1@nova.io:DevKey#01\ndev2@nova.io:DevKey#02\ndev3@nova.io:DevKey#03",
         template = ModelingEngine.getDefaultBuiltInTemplates().first()
     ),
-    val activeSubTab: Int = 0, // 0 = Split/Input, 1 = Live Preview, 2 = Template Builder
+    val activeSubTab: Int = 0,
     val isProcessing: Boolean = false,
     val lastRestoredSessionTimestamp: Long? = null
 )
@@ -109,7 +109,6 @@ class NovaViewModel(
     private val _isUnlocked = MutableStateFlow(false)
     val isUnlocked: StateFlow<Boolean> = _isUnlocked.asStateFlow()
 
-    // Reactive Database Flows
     val allActiveNotes: StateFlow<List<NoteEntity>> = repository.activeNotesFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -134,7 +133,6 @@ class NovaViewModel(
     val appSettings: StateFlow<AppSettingsState> = repository.settingsFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettingsState())
 
-    // Filtered Notes Flow combining active filter, folder, and global search query (supports Arabic & English)
     val displayedNotes: StateFlow<List<NoteEntity>> = combine(
         allActiveNotes,
         trashedNotes,
@@ -174,7 +172,6 @@ class NovaViewModel(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // Editor State & Undo/Redo Stacks
     private val _editorState = MutableStateFlow(EditorUiState())
     val editorState: StateFlow<EditorUiState> = _editorState.asStateFlow()
 
@@ -182,12 +179,10 @@ class NovaViewModel(
     private val redoStack = ArrayDeque<UndoRedoSnapshot>()
     private var autoSaveDebounceJob: Job? = null
 
-    // Modeling State
     private val _modelingState = MutableStateFlow(ModelingUiState())
     val modelingState: StateFlow<ModelingUiState> = _modelingState.asStateFlow()
     private var modelingDebounceJob: Job? = null
 
-    // Local Backups List
     private val _backupsList = MutableStateFlow<List<BackupMetadata>>(emptyList())
     val backupsList: StateFlow<List<BackupMetadata>> = _backupsList.asStateFlow()
 
@@ -206,7 +201,6 @@ class NovaViewModel(
     }
 
     private suspend fun restoreSessionsOnStartup() {
-        // 1. Restore Modeling Session if present
         val modSnapshot = repository.getModelingSessionSnapshot()
         if (modSnapshot != null && modSnapshot.rawInput.isNotBlank()) {
             val savedTemplates = repository.database.modelingTemplateDao().getAllTemplatesSnapshot()
@@ -216,6 +210,8 @@ class NovaViewModel(
                 sortMode = modSnapshot.sortMode,
                 startDateStr = modSnapshot.startDateStr,
                 dateMode = modSnapshot.dateMode,
+                showDateOnEveryGroup = modSnapshot.showDateOnEveryGroup,
+                combineGroupsIntoOneList = modSnapshot.combineGroupsIntoOneList,
                 startNumber = modSnapshot.startNumber,
                 endNumber = modSnapshot.endNumber,
                 recordsPerGroup = modSnapshot.recordsPerGroup,
@@ -239,7 +235,6 @@ class NovaViewModel(
             )
         }
 
-        // 2. Reconcile any interrupted Note Editor session without overwriting newer DB records
         val recoveredNotePair = repository.recoverNoteSessionIfApplicable()
         if (recoveredNotePair != null) {
             val (note, snapshot) = recoveredNotePair
@@ -293,7 +288,6 @@ class NovaViewModel(
         _statusBannerMessage.value = null
     }
 
-    // --- Note Editor & Critical Auto-Save Logic ---
     fun openNewNote(defaultFolderId: Long? = _selectedFolderId.value) {
         viewModelScope.launch {
             val defaultDir = appSettings.value.defaultTextDirection
@@ -541,9 +535,6 @@ class NovaViewModel(
         }
     }
 
-    /**
-     * Flushes any pending auto-save immediately when leaving the editor or when the app enters the background.
-     */
     fun flushEditorSaveImmediately(closeAfterFlush: Boolean = false) {
         autoSaveDebounceJob?.cancel()
         val snapshot = _editorState.value
@@ -589,7 +580,6 @@ class NovaViewModel(
         }
     }
 
-    // --- Note List Actions ---
     fun togglePinNote(note: NoteEntity) {
         viewModelScope.launch { repository.togglePinNote(note) }
     }
@@ -630,7 +620,6 @@ class NovaViewModel(
         }
     }
 
-    // --- Folders Management ---
     fun createFolder(name: String, colorHex: String, iconName: String = "folder") {
         if (name.isBlank()) return
         viewModelScope.launch {
@@ -657,7 +646,6 @@ class NovaViewModel(
         }
     }
 
-    // --- To-do Management ---
     fun addOrUpdateTodo(
         id: Long = 0L,
         title: String,
@@ -711,7 +699,6 @@ class NovaViewModel(
         }
     }
 
-    // --- Modeling Engine & Live Preview ---
     fun updateModelingInput(newInput: String) {
         _modelingState.value = _modelingState.value.copy(rawInput = newInput, isProcessing = true)
         val delayMs = if (newInput.length > 20_000) 280L else 60L
@@ -790,6 +777,8 @@ class NovaViewModel(
                 sortMode = tmpl.sortMode,
                 startDateStr = tmpl.startDateStr,
                 dateMode = tmpl.dateMode,
+                showDateOnEveryGroup = tmpl.showDateOnEveryGroup,
+                combineGroupsIntoOneList = tmpl.combineGroupsIntoOneList,
                 startNumber = tmpl.startNumber,
                 endNumber = tmpl.endNumber,
                 recordsPerGroup = tmpl.recordsPerGroup,
@@ -870,7 +859,6 @@ class NovaViewModel(
         }
     }
 
-    // --- Backup, Restore & Security ---
     fun refreshBackupsList() {
         viewModelScope.launch {
             _backupsList.value = repository.listBackups()

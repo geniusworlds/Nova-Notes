@@ -8,14 +8,11 @@ enum class TextDirectionMode {
 
 object BidiTextHelper {
     private val rtlCharRange = listOf(
-        0x0590..0x08FF, // Hebrew, Arabic, Syriac, Thaana, NKo, Samaritan, Mandaic
-        0xFB50..0xFDFF, // Arabic Presentation Forms-A
-        0xFE70..0xFEFF  // Arabic Presentation Forms-B
+        0x0590..0x08FF,
+        0xFB50..0xFDFF,
+        0xFE70..0xFEFF
     )
 
-    /**
-     * Detects whether the first strong directional character in [text] is RTL (e.g. Arabic) or LTR.
-     */
     fun isRtlText(text: String): Boolean {
         for (ch in text) {
             val code = ch.code
@@ -29,9 +26,6 @@ object BidiTextHelper {
         return false
     }
 
-    /**
-     * Resolves whether RTL layout direction should be used for a given [mode] and [sampleText].
-     */
     fun resolveIsRtl(mode: String, sampleText: String): Boolean {
         return when (mode.uppercase()) {
             "RTL" -> true
@@ -40,9 +34,6 @@ object BidiTextHelper {
         }
     }
 
-    /**
-     * Converts Western Arabic numerals (0-9) to Eastern Arabic numerals (٠-٩) when requested.
-     */
     fun formatNumber(value: Int, useArabicNumerals: Boolean): String {
         val raw = value.toString()
         if (!useArabicNumerals) return raw

@@ -42,6 +42,8 @@ data class ModelingSessionSnapshot(
     val sortMode: String,
     val startDateStr: String,
     val dateMode: String,
+    val showDateOnEveryGroup: Boolean = true,
+    val combineGroupsIntoOneList: Boolean = false,
     val startNumber: Int,
     val endNumber: Int?,
     val recordsPerGroup: Int,
@@ -64,7 +66,7 @@ data class ModelingSessionSnapshot(
 
 data class AppSettingsState(
     val autoBackupEnabled: Boolean = true,
-    val backupFrequency: String = "DAILY", // DAILY, WEEKLY
+    val backupFrequency: String = "DAILY",
     val backupRetentionCount: Int = 5,
     val lastBackupTimestamp: Long = 0L,
     val lastBackupSizeBytes: Long = 0L,
@@ -78,7 +80,6 @@ data class AppSettingsState(
 class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
 
     companion object {
-        // Note Editor Recovery Keys
         private val KEY_NOTE_ID = longPreferencesKey("recovery_note_id")
         private val KEY_NOTE_TITLE = stringPreferencesKey("recovery_note_title")
         private val KEY_NOTE_CONTENT = stringPreferencesKey("recovery_note_content")
@@ -91,12 +92,13 @@ class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
         private val KEY_NOTE_TS = longPreferencesKey("recovery_note_ts")
         private val KEY_NOTE_CHECKSUM = stringPreferencesKey("recovery_note_checksum")
 
-        // Modeling Session Recovery Keys
         private val KEY_MOD_INPUT = stringPreferencesKey("recovery_mod_input")
         private val KEY_MOD_TEMPLATE_ID = longPreferencesKey("recovery_mod_template_id")
         private val KEY_MOD_SORT = stringPreferencesKey("recovery_mod_sort")
         private val KEY_MOD_START_DATE = stringPreferencesKey("recovery_mod_start_date")
         private val KEY_MOD_DATE_MODE = stringPreferencesKey("recovery_mod_date_mode")
+        private val KEY_MOD_SHOW_DATE_EVERY_GROUP = booleanPreferencesKey("recovery_mod_show_date_every_group")
+        private val KEY_MOD_COMBINE_ONE_LIST = booleanPreferencesKey("recovery_mod_combine_one_list")
         private val KEY_MOD_START_NUM = intPreferencesKey("recovery_mod_start_num")
         private val KEY_MOD_END_NUM = intPreferencesKey("recovery_mod_end_num")
         private val KEY_MOD_RECORDS_PER_GROUP = intPreferencesKey("recovery_mod_rec_per_group")
@@ -111,7 +113,6 @@ class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
         private val KEY_MOD_TS = longPreferencesKey("recovery_mod_ts")
         private val KEY_MOD_CHECKSUM = stringPreferencesKey("recovery_mod_checksum")
 
-        // Settings & Backup Keys
         private val KEY_AUTO_BACKUP = booleanPreferencesKey("settings_auto_backup")
         private val KEY_BACKUP_FREQ = stringPreferencesKey("settings_backup_freq")
         private val KEY_BACKUP_RETENTION = intPreferencesKey("settings_backup_retention")
@@ -214,6 +215,8 @@ class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
         sortMode: String,
         startDateStr: String,
         dateMode: String,
+        showDateOnEveryGroup: Boolean = true,
+        combineGroupsIntoOneList: Boolean = false,
         startNumber: Int,
         endNumber: Int?,
         recordsPerGroup: Int,
@@ -234,12 +237,10 @@ class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
             prefs[KEY_MOD_SORT] = sortMode
             prefs[KEY_MOD_START_DATE] = startDateStr
             prefs[KEY_MOD_DATE_MODE] = dateMode
+            prefs[KEY_MOD_SHOW_DATE_EVERY_GROUP] = showDateOnEveryGroup
+            prefs[KEY_MOD_COMBINE_ONE_LIST] = combineGroupsIntoOneList
             prefs[KEY_MOD_START_NUM] = startNumber
-            if (endNumber != null) {
-                prefs[KEY_MOD_END_NUM] = endNumber
-            } else {
-                prefs.remove(KEY_MOD_END_NUM)
-            }
+            if (endNumber != null) prefs[KEY_MOD_END_NUM] = endNumber else prefs.remove(KEY_MOD_END_NUM)
             prefs[KEY_MOD_RECORDS_PER_GROUP] = recordsPerGroup
             prefs[KEY_MOD_PARENT_IDX] = parentIndexInGroup
             prefs[KEY_MOD_PARENT_LABEL] = parentLabel
@@ -263,6 +264,8 @@ class SessionRecoveryManager(private val dataStore: DataStore<Preferences>) {
             sortMode = prefs[KEY_MOD_SORT] ?: "ORIGINAL",
             startDateStr = prefs[KEY_MOD_START_DATE] ?: "30/11/2008",
             dateMode = prefs[KEY_MOD_DATE_MODE] ?: "INCREMENT_DAY",
+            showDateOnEveryGroup = prefs[KEY_MOD_SHOW_DATE_EVERY_GROUP] ?: true,
+            combineGroupsIntoOneList = prefs[KEY_MOD_COMBINE_ONE_LIST] ?: false,
             startNumber = prefs[KEY_MOD_START_NUM] ?: 1,
             endNumber = prefs[KEY_MOD_END_NUM],
             recordsPerGroup = prefs[KEY_MOD_RECORDS_PER_GROUP] ?: 4,

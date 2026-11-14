@@ -23,8 +23,8 @@ data class NoteEntity(
     val isPinned: Boolean = false,
     val isFavorite: Boolean = false,
     val isTrashed: Boolean = false,
-    val textDirection: String = "AUTO", // AUTO, LTR, RTL
-    val textAlignment: String = "START", // START, CENTER, END
+    val textDirection: String = "AUTO",
+    val textAlignment: String = "START",
     val lastCursorPosition: Int = 0,
     val lastSelectionEnd: Int = 0,
     val lastScrollOffset: Int = 0,
@@ -81,14 +81,16 @@ data class ModelingTemplateEntity(
     val separatorLine: String = "-----------------------------------------------------",
     val parentLabel: String = "Parent",
     val childLabel: String = "Child",
-    val recordsPerGroup: Int = 4, // 1 parent + 3 children by default
-    val parentIndexInGroup: Int = 0, // 0 = first item in group is parent
+    val recordsPerGroup: Int = 4,
+    val parentIndexInGroup: Int = 0,
     val startNumber: Int = 1,
     val endNumber: Int? = null,
     val useArabicNumerals: Boolean = false,
     val restartNumberingPerGroup: Boolean = true,
     val dateMode: String = "INCREMENT_DAY", // FIXED, INCREMENT_DAY
     val startDateStr: String = "30/11/2008",
+    val showDateOnEveryGroup: Boolean = true,
+    val combineGroupsIntoOneList: Boolean = false,
     val sortMode: String = "ORIGINAL", // ORIGINAL, ASC, DESC, REVERSE
     val removeEmptyLines: Boolean = true,
     val prefixText: String = "",

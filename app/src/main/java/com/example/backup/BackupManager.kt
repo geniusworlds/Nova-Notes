@@ -47,9 +47,9 @@ data class BackupPayload(
 data class RestoreSelection(
     val restoreAll: Boolean = true,
     val restoreNotes: Boolean = true,
-    val selectedNoteIds: Set<Long>? = null, // null means all notes in backup
+    val selectedNoteIds: Set<Long>? = null,
     val restoreFolders: Boolean = true,
-    val selectedFolderIds: Set<Long>? = null, // null means all folders in backup
+    val selectedFolderIds: Set<Long>? = null,
     val restoreTodos: Boolean = true,
     val restoreTemplates: Boolean = true,
     val restoreSettings: Boolean = true
@@ -76,10 +76,6 @@ class BackupManager(
         }
     }
 
-    /**
-     * Checks if an automatic backup is due according to the user's schedule (DAILY / WEEKLY),
-     * and creates one in the background if needed.
-     */
     suspend fun checkAndRunScheduledBackup(): BackupMetadata? = withContext(Dispatchers.IO) {
         val settings = sessionManager.getAppSettingsSnapshot()
         if (!settings.autoBackupEnabled) return@withContext null
@@ -98,10 +94,6 @@ class BackupManager(
         }
     }
 
-    /**
-     * Creates an atomic, checksum-verified JSON backup file in the dedicated local backup directory,
-     * and rotates old backups beyond the configured retention count.
-     */
     suspend fun createLocalBackup(isAuto: Boolean = false): BackupMetadata = withContext(Dispatchers.IO) {
         backupMutex.withLock {
             val timestamp = System.currentTimeMillis()
@@ -113,7 +105,6 @@ class BackupManager(
             val tempFile = File(backupDir, "$finalFileName.tmp")
             val finalFile = File(backupDir, finalFileName)
 
-            // Atomic write: write to .tmp first, flush, then rename to final file
             tempFile.writeText(jsonString, Charsets.UTF_8)
             if (finalFile.exists()) finalFile.delete()
             val renamed = tempFile.renameTo(finalFile)
@@ -237,6 +228,8 @@ class BackupManager(
             put("restartNumberingPerGroup", tmpl.restartNumberingPerGroup)
             put("dateMode", tmpl.dateMode)
             put("startDateStr", tmpl.startDateStr)
+            put("showDateOnEveryGroup", tmpl.showDateOnEveryGroup)
+            put("combineGroupsIntoOneList", tmpl.combineGroupsIntoOneList)
             put("sortMode", tmpl.sortMode)
             put("removeEmptyLines", tmpl.removeEmptyLines)
             put("prefixText", tmpl.prefixText)
@@ -270,6 +263,8 @@ class BackupManager(
             restartNumberingPerGroup = obj.optBoolean("restartNumberingPerGroup", true),
             dateMode = obj.optString("dateMode", "INCREMENT_DAY"),
             startDateStr = obj.optString("startDateStr", "30/11/2008"),
+            showDateOnEveryGroup = obj.optBoolean("showDateOnEveryGroup", true),
+            combineGroupsIntoOneList = obj.optBoolean("combineGroupsIntoOneList", false),
             sortMode = obj.optString("sortMode", "ORIGINAL"),
             removeEmptyLines = obj.optBoolean("removeEmptyLines", true),
             prefixText = obj.optString("prefixText", ""),
@@ -279,10 +274,6 @@ class BackupManager(
         )
     }
 
-    /**
-     * Parses and verifies the integrity checksum of a backup JSON string.
-     * Throws IllegalArgumentException if corrupted or tampered with.
-     */
     fun parseAndValidateBackupJson(rawJson: String): BackupPayload {
         val root = try {
             JSONObject(rawJson)
@@ -395,14 +386,6 @@ class BackupManager(
         )
     }
 
-    /**
-     * Restores data from a validated [BackupPayload] with granular [RestoreSelection] options:
-     * 1. Entire application
-     * 2. Selected folders
-     * 3. Selected notes
-     * 4. Modeling templates
-     * 5. Application settings
-     */
     suspend fun restoreFromPayload(
         payload: BackupPayload,
         selection: RestoreSelection
@@ -505,7 +488,6 @@ class BackupManager(
     }
 
     suspend fun pruneOldBackups(retainCount: Int): Int = withContext(Dispatchers.IO) {
-        // Also clean up any leftover .tmp files from interrupted backups
         backupDir.listFiles { f -> f.name.endsWith(".tmp") }?.forEach { it.delete() }
 
         val validFiles = backupDir.listFiles { f -> f.isFile && f.name.endsWith(".json") }

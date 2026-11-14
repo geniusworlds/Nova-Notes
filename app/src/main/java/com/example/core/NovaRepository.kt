@@ -37,10 +37,6 @@ class NovaRepository(
     val templatesFlow: Flow<List<ModelingTemplateEntity>> = templateDao.getAllTemplates()
     val settingsFlow: Flow<AppSettingsState> = sessionManager.appSettingsFlow
 
-    /**
-     * Seeds default folders and the two built-in Modeling templates ("Parent / Children" and "Sequential List")
-     * on first launch if none exist.
-     */
     suspend fun ensureDefaultsInitialized() = withContext(Dispatchers.IO) {
         val existingTemplates = templateDao.getAllTemplatesSnapshot()
         if (existingTemplates.none { it.isBuiltIn }) {
@@ -58,7 +54,6 @@ class NovaRepository(
         }
     }
 
-    // --- Notes Operations ---
     suspend fun getNoteById(id: Long): NoteEntity? = withContext(Dispatchers.IO) {
         noteDao.getNoteById(id)
     }
@@ -104,15 +99,8 @@ class NovaRepository(
         noteDao.insertNotes(notes)
     }
 
-    // --- Folder Operations ---
     suspend fun createFolder(name: String, colorHex: String, iconName: String): Long = withContext(Dispatchers.IO) {
-        folderDao.insertFolder(
-            FolderEntity(
-                name = name.trim(),
-                colorHex = colorHex,
-                iconName = iconName
-            )
-        )
+        folderDao.insertFolder(FolderEntity(name = name.trim(), colorHex = colorHex, iconName = iconName))
     }
 
     suspend fun updateFolder(folder: FolderEntity) = withContext(Dispatchers.IO) {
@@ -123,18 +111,12 @@ class NovaRepository(
         folderDao.deleteFolderAndDetachNotes(folder)
     }
 
-    // --- To-do Operations ---
     suspend fun saveTodo(todo: TodoEntity): Long = withContext(Dispatchers.IO) {
         todoDao.insertTodo(todo.copy(updatedAt = System.currentTimeMillis()))
     }
 
     suspend fun toggleTodoCompleted(todo: TodoEntity) = withContext(Dispatchers.IO) {
-        todoDao.updateTodo(
-            todo.copy(
-                isCompleted = !todo.isCompleted,
-                updatedAt = System.currentTimeMillis()
-            )
-        )
+        todoDao.updateTodo(todo.copy(isCompleted = !todo.isCompleted, updatedAt = System.currentTimeMillis()))
     }
 
     suspend fun deleteTodo(todo: TodoEntity) = withContext(Dispatchers.IO) {
@@ -152,7 +134,6 @@ class NovaRepository(
         todoDao.deleteCompletedTodos()
     }
 
-    // --- Modeling Template Operations ---
     suspend fun saveTemplate(template: ModelingTemplateEntity): Long = withContext(Dispatchers.IO) {
         templateDao.insertTemplate(template.copy(updatedAt = System.currentTimeMillis()))
     }
@@ -183,17 +164,11 @@ class NovaRepository(
         templateDao.insertTemplates(templates)
     }
 
-    // --- Session Recovery Operations ---
-    /**
-     * Reconciles a Note Editor recovery snapshot with the database's latest saved version.
-     * NEVER overwrites a more recent database save with an older recovery snapshot.
-     */
     suspend fun recoverNoteSessionIfApplicable(): Pair<NoteEntity, NoteEditorSessionSnapshot>? = withContext(Dispatchers.IO) {
         val snapshot = sessionManager.getNoteEditorSession() ?: return@withContext null
         val noteId = snapshot.activeNoteId ?: return@withContext null
         val dbNote = noteDao.getNoteById(noteId) ?: return@withContext null
 
-        // Rule: Never overwrite a more recent saved version with an older recovery snapshot
         if (snapshot.timestamp > dbNote.updatedAt &&
             (snapshot.unsavedTitle != dbNote.title || snapshot.unsavedContent != dbNote.content)
         ) {
@@ -210,7 +185,6 @@ class NovaRepository(
             noteDao.updateNote(reconciled)
             reconciled to snapshot
         } else {
-            // DB is already newer or identical; preserve cursor & scroll from snapshot if valid
             val updatedCursorNote = dbNote.copy(
                 lastCursorPosition = snapshot.cursorPosition.coerceIn(0, dbNote.content.length),
                 lastSelectionEnd = snapshot.selectionEnd.coerceIn(0, dbNote.content.length),
@@ -224,7 +198,6 @@ class NovaRepository(
         sessionManager.getModelingSession()
     }
 
-    // --- Backup & Restore Operations ---
     suspend fun createBackupNow(isAuto: Boolean = false): BackupMetadata =
         backupManager.createLocalBackup(isAuto = isAuto)
 

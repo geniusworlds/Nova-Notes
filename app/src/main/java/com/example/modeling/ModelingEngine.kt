@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 
 data class ParsedRecord(
-    val originalIndex: Int, // 1-based line number from input
+    val originalIndex: Int,
     val rawLine: String,
     val normalizedLine: String,
     val isEmpty: Boolean,
@@ -109,10 +109,6 @@ object ModelingEngine {
 
     private val placeholderRegex = Regex("\\{[a-zA-Z0-9_]+\\}")
 
-    /**
-     * Validates a template configuration before execution.
-     * Returns null if valid, or a descriptive human-readable error message if invalid.
-     */
     fun validateTemplate(template: ModelingTemplateEntity): String? {
         if (template.name.isBlank()) {
             return "Template name cannot be empty."
@@ -155,26 +151,12 @@ object ModelingEngine {
         return null
     }
 
-    /**
-     * Runs the complete 10-stage local Modeling Processing Pipeline:
-     * 1. Input Parsing
-     * 2. Data Normalization
-     * 3. Validation (never silently deletes records)
-     * 4. Duplicate Detection (flags duplicates without deleting them)
-     * 5. Sorting
-     * 6. Template Processing
-     * 7. Date Processing
-     * 8. Output Generation
-     * 9. Preview & Group Structuring
-     * 10. Statistics & Result Packaging
-     */
     fun process(
         rawInput: String,
         template: ModelingTemplateEntity
     ): ModelingProcessResult {
         val startTime = System.currentTimeMillis()
 
-        // Validate template first
         val validationError = validateTemplate(template)
         if (validationError != null) {
             return ModelingProcessResult(
@@ -206,7 +188,6 @@ object ModelingEngine {
             )
         }
 
-        // 1. Input Parsing & 2. Data Normalization & 3. Validation & 4. Duplicate Detection
         val rawLines = rawInput.split("\r\n", "\n")
         val seenNormalized = HashSet<String>(rawLines.size)
         val parsedRecords = ArrayList<ParsedRecord>(rawLines.size)
@@ -234,11 +215,7 @@ object ModelingEngine {
                 continue
             }
 
-            // Normalize internal excessive whitespace while preserving multi-colon or single-colon or arbitrary text records
             val normalized = trimmed.replace(Regex("\\s+"), " ")
-
-            // Validation rules:
-            // Do not assume every record contains a single colon, but flag lines that are broken delimiter-only or control chars
             val isDelimiterOnly = normalized.all { it == ':' || it == ';' || it == '|' || it == '-' || it == ',' }
             val hasEdgeColonOnly = (normalized.startsWith(":") || normalized.endsWith(":")) &&
                 normalized.split(":").any { it.isBlank() }
@@ -251,14 +228,8 @@ object ModelingEngine {
             }
 
             val isDuplicate = !seenNormalized.add(normalized)
-            if (isDuplicate) {
-                duplicateCount++
-            }
-            if (isInvalid) {
-                invalidCount++
-            } else {
-                validCount++
-            }
+            if (isDuplicate) duplicateCount++
+            if (isInvalid) invalidCount++ else validCount++
 
             parsedRecords.add(
                 ParsedRecord(
@@ -273,13 +244,10 @@ object ModelingEngine {
             )
         }
 
-        // Filter empty lines only if template.removeEmptyLines is enabled; never silently drop non-empty records
         val workingRecords = if (template.removeEmptyLines) {
             parsedRecords.filter { !it.isEmpty }
         } else {
-            parsedRecords.map {
-                if (it.isEmpty) it.copy(normalizedLine = "") else it
-            }
+            parsedRecords.map { if (it.isEmpty) it.copy(normalizedLine = "") else it }
         }
 
         if (workingRecords.isEmpty()) {
@@ -297,15 +265,13 @@ object ModelingEngine {
             )
         }
 
-        // 5. Sorting
         val sortedRecords = when (template.sortMode.uppercase()) {
             "ASC" -> workingRecords.sortedBy { it.normalizedLine.lowercase() }
             "DESC" -> workingRecords.sortedByDescending { it.normalizedLine.lowercase() }
             "REVERSE" -> workingRecords.asReversed()
-            else -> workingRecords // ORIGINAL order preserved
+            else -> workingRecords
         }
 
-        // Apply optional endNumber cap if configured in Sequential List or Custom mode
         val maxItems = if (template.endNumber != null && template.endNumber >= template.startNumber) {
             (template.endNumber - template.startNumber + 1).coerceAtLeast(1)
         } else {
@@ -313,7 +279,6 @@ object ModelingEngine {
         }
         val effectiveRecords = sortedRecords.take(maxItems)
 
-        // 6. Template Processing & 7. Date Processing & 8. Output Generation
         val groups = ArrayList<ModelingGroupOutput>()
         val fullBuilder = StringBuilder(effectiveRecords.size * 96)
 
@@ -332,13 +297,17 @@ object ModelingEngine {
                     )
                     val groupBuilder = StringBuilder()
 
-                    // Group Header with Date
                     val sep = template.separatorLine.ifEmpty { "-----------------------------------------------------" }
                     val childSep = if (sep.length == 53) "$sep-" else sep
 
-                    groupBuilder.append(sep).append("\n")
-                    groupBuilder.append("[ ").append(dateStr).append(" ]\n")
-                    groupBuilder.append(sep).append("\n")
+                    val shouldPrintDateHeader = template.showDateOnEveryGroup || groupIdx == 0
+                    if (shouldPrintDateHeader) {
+                        groupBuilder.append(sep).append("\n")
+                        groupBuilder.append("[ ").append(dateStr).append(" ]\n")
+                        groupBuilder.append(sep).append("\n")
+                    } else if (!template.combineGroupsIntoOneList) {
+                        groupBuilder.append(sep).append("\n")
+                    }
 
                     val parentIdx = template.parentIndexInGroup.coerceIn(0, chunk.lastIndex)
                     val parentRecord = chunk[parentIdx]
@@ -374,9 +343,7 @@ object ModelingEngine {
                             recordIndices = chunk.map { it.originalIndex }
                         )
                     )
-                    if (fullBuilder.isNotEmpty()) {
-                        fullBuilder.append("\n")
-                    }
+                    if (fullBuilder.isNotEmpty()) fullBuilder.append("\n")
                     fullBuilder.append(groupText)
                 }
             }
@@ -384,34 +351,54 @@ object ModelingEngine {
             "SEQUENTIAL_LIST" -> {
                 val sep = template.separatorLine.ifEmpty { "-----------------------------------------------------" }
                 val itemSep = if (sep.length == 53) "$sep-" else sep
-                val listBuilder = StringBuilder()
-                listBuilder.append(sep).append("\n")
-
+                val groupSize = if (template.recordsPerGroup in 1..99999) template.recordsPerGroup else effectiveRecords.size.coerceAtLeast(1)
+                val chunks = effectiveRecords.chunked(groupSize)
                 var currentNum = template.startNumber
-                val dateStr = ModelingDateHelper.calculateGroupDate(template.startDateStr, 0, template.dateMode)
 
-                for (rec in effectiveRecords) {
-                    val numStr = BidiTextHelper.formatNumber(currentNum, template.useArabicNumerals)
-                    val formattedLine = applyAffixes(rec.normalizedLine, template)
-                    listBuilder.append(numStr).append(": ").append(formattedLine).append("\n")
-                    listBuilder.append(itemSep).append("\n")
-                    currentNum++
-                }
-
-                val outputText = listBuilder.toString().trimEnd()
-                groups.add(
-                    ModelingGroupOutput(
-                        groupNumber = 1,
-                        dateString = dateStr,
-                        formattedText = outputText,
-                        recordIndices = effectiveRecords.map { it.originalIndex }
+                for ((groupIdx, chunk) in chunks.withIndex()) {
+                    val groupNum = groupIdx + 1
+                    val dateStr = ModelingDateHelper.calculateGroupDate(
+                        startDateStr = template.startDateStr,
+                        groupIndexZeroBased = groupIdx,
+                        incrementMode = template.dateMode
                     )
-                )
-                fullBuilder.append(outputText)
+                    val listBuilder = StringBuilder()
+
+                    if (template.showDateOnEveryGroup) {
+                        listBuilder.append(sep).append("\n")
+                        listBuilder.append("[ ").append(dateStr).append(" ]\n")
+                        listBuilder.append(sep).append("\n")
+                    } else if (groupIdx == 0 || !template.combineGroupsIntoOneList) {
+                        listBuilder.append(sep).append("\n")
+                    }
+
+                    if (template.restartNumberingPerGroup && groupIdx > 0) {
+                        currentNum = template.startNumber
+                    }
+
+                    for (rec in chunk) {
+                        val numStr = BidiTextHelper.formatNumber(currentNum, template.useArabicNumerals)
+                        val formattedLine = applyAffixes(rec.normalizedLine, template)
+                        listBuilder.append(numStr).append(": ").append(formattedLine).append("\n")
+                        listBuilder.append(itemSep).append("\n")
+                        currentNum++
+                    }
+
+                    val outputText = listBuilder.toString().trimEnd()
+                    groups.add(
+                        ModelingGroupOutput(
+                            groupNumber = groupNum,
+                            dateString = dateStr,
+                            formattedText = outputText,
+                            recordIndices = chunk.map { it.originalIndex }
+                        )
+                    )
+                    if (fullBuilder.isNotEmpty()) fullBuilder.append("\n")
+                    fullBuilder.append(outputText)
+                }
             }
 
             else -> {
-                // CUSTOM Template Builder Execution
                 val groupSize = template.recordsPerGroup.coerceAtLeast(1)
                 val chunks = effectiveRecords.chunked(groupSize)
                 var globalNumber = template.startNumber
@@ -428,8 +415,9 @@ object ModelingEngine {
                     val parentRecordText = applyAffixes(chunk[parentIdx].normalizedLine, template)
 
                     val groupBuilder = StringBuilder()
+                    val shouldPrintHeader = template.showDateOnEveryGroup || groupIdx == 0
 
-                    if (template.headerPattern.isNotBlank()) {
+                    if (shouldPrintHeader && template.headerPattern.isNotBlank()) {
                         val headerRendered = renderPlaceholders(
                             pattern = template.headerPattern,
                             numberStr = BidiTextHelper.formatNumber(globalNumber, template.useArabicNumerals),
@@ -518,12 +506,27 @@ object ModelingEngine {
                             recordIndices = chunk.map { it.originalIndex }
                         )
                     )
-                    if (fullBuilder.isNotEmpty()) {
-                        fullBuilder.append("\n")
-                    }
+                    if (fullBuilder.isNotEmpty()) fullBuilder.append("\n")
                     fullBuilder.append(groupText)
                 }
             }
+        }
+
+        // If the user enabled "Groups on One List" (combineGroupsIntoOneList), merge all generated groups into a single unified list card
+        val finalGroups = if (template.combineGroupsIntoOneList && groups.size > 1) {
+            val firstDate = groups.first().dateString
+            val lastDate = groups.last().dateString
+            val dateRangeLabel = if (firstDate == lastDate) firstDate else "$firstDate → $lastDate"
+            listOf(
+                ModelingGroupOutput(
+                    groupNumber = 1,
+                    dateString = dateRangeLabel,
+                    formattedText = fullBuilder.toString(),
+                    recordIndices = groups.flatMap { it.recordIndices }
+                )
+            )
+        } else {
+            groups
         }
 
         return ModelingProcessResult(
@@ -533,7 +536,7 @@ object ModelingEngine {
             invalidCount = invalidCount,
             duplicateCount = duplicateCount,
             emptyLineCount = emptyCount,
-            groups = groups,
+            groups = finalGroups,
             fullOutput = fullBuilder.toString(),
             templateValidationError = null,
             processingTimeMs = System.currentTimeMillis() - startTime
@@ -591,6 +594,8 @@ object ModelingEngine {
                 restartNumberingPerGroup = true,
                 dateMode = "INCREMENT_DAY",
                 startDateStr = "30/11/2008",
+                showDateOnEveryGroup = true,
+                combineGroupsIntoOneList = false,
                 sortMode = "ORIGINAL",
                 removeEmptyLines = true
             ),
@@ -607,13 +612,15 @@ object ModelingEngine {
                 separatorLine = "-----------------------------------------------------",
                 parentLabel = "Parent",
                 childLabel = "Child",
-                recordsPerGroup = 100000,
+                recordsPerGroup = 4,
                 parentIndexInGroup = 0,
                 startNumber = 1,
                 useArabicNumerals = false,
                 restartNumberingPerGroup = false,
                 dateMode = "FIXED",
                 startDateStr = "30/11/2008",
+                showDateOnEveryGroup = false,
+                combineGroupsIntoOneList = true,
                 sortMode = "ORIGINAL",
                 removeEmptyLines = true
             )
