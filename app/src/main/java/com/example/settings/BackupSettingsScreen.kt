@@ -62,6 +62,7 @@ import com.example.backup.BackupMetadata
 import com.example.backup.BackupPayload
 import com.example.backup.RestoreSelection
 import com.example.session_recovery.AppSettingsState
+import com.example.ui.theme.novaText
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import java.text.SimpleDateFormat
@@ -118,11 +119,11 @@ fun BackupSettingsScreen(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                     Column(Modifier.weight(1f)) {
                         Text(if (isArabic) "لغة التطبيق" else "App language", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
-                        Text(if (isArabic) "العربية" else "English", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                        Text(if (isArabic) "العربية" else novaText(isArabic, "English", "الإنجليزية"), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         FilterChip(selected = isArabic, onClick = { onLanguageChange(true) }, label = { Text("العربية") })
-                        FilterChip(selected = !isArabic, onClick = { onLanguageChange(false) }, label = { Text("English") })
+                        FilterChip(selected = !isArabic, onClick = { onLanguageChange(false) }, label = { Text(novaText(isArabic, "English", "الإنجليزية")) })
                     }
                 }
             }
@@ -153,7 +154,7 @@ fun BackupSettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Automatic Local Backup", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(isArabic, "Automatic Local Backup", "نسخ احتياطي محلي تلقائي"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                         Text(
                             text = if (settings.lastBackupTimestamp > 0L) {
                                 "Last backup: ${dateFormat.format(Date(settings.lastBackupTimestamp))} (${settings.lastBackupSizeBytes / 1024} KB)"
@@ -180,7 +181,7 @@ fun BackupSettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Backup Schedule", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Backup Schedule", "جدولة النسخ الاحتياطي"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf("DAILY", "WEEKLY").forEach { freq ->
                             FilterChip(
@@ -202,7 +203,7 @@ fun BackupSettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Backup Versions Retained", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Backup Versions Retained", "عدد النسخ المحتفظ بها"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         listOf(3, 5, 10, 20).forEach { count ->
                             FilterChip(
@@ -230,7 +231,7 @@ fun BackupSettingsScreen(
                     ) {
                         Icon(Icons.Default.Backup, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Create Backup Now", fontWeight = FontWeight.Bold)
+                        Text(novaText(isArabic, "Create Backup Now", "إنشاء نسخة احتياطية الآن"), fontWeight = FontWeight.Bold)
                     }
 
                     OutlinedButton(
@@ -239,7 +240,7 @@ fun BackupSettingsScreen(
                     ) {
                         Icon(Icons.Default.FileDownload, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Export Backup", color = MaterialTheme.colorScheme.primary)
+                        Text(novaText(isArabic, "Export Backup", "تصدير النسخة الاحتياطية"), color = MaterialTheme.colorScheme.primary)
                     }
 
                     OutlinedButton(
@@ -248,7 +249,7 @@ fun BackupSettingsScreen(
                     ) {
                         Icon(Icons.Default.FileUpload, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Import Backup", color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(isArabic, "Import Backup", "استيراد نسخة احتياطية"), color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
@@ -270,7 +271,7 @@ fun BackupSettingsScreen(
                     Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Local PIN Protection", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(isArabic, "Local PIN Protection", "الحماية برمز PIN محلي"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                         Text(
                             text = if (settings.pinLockEnabled) "PIN Lock Active on Launch" else "Optional offline PIN lock",
                             style = MaterialTheme.typography.bodySmall,
@@ -364,14 +365,14 @@ fun BackupSettingsScreen(
                             ) {
                                 Icon(Icons.Default.Restore, contentDescription = null, modifier = Modifier.size(15.dp))
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Text("Preview & Restore", style = MaterialTheme.typography.labelLarge)
+                                Text(novaText(isArabic, "Preview & Restore", "معاينة واستعادة"), style = MaterialTheme.typography.labelLarge)
                             }
 
                             IconButton(
                                 onClick = { onDeleteBackup(meta) },
                                 modifier = Modifier.size(34.dp)
                             ) {
-                                Icon(Icons.Default.Delete, contentDescription = "Delete Backup", tint = StatusError, modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.Delete, contentDescription = novaText(isArabic, "Delete Backup", "حذف النسخة الاحتياطية"), tint = StatusError, modifier = Modifier.size(18.dp))
                             }
                         }
                     }
@@ -401,7 +402,7 @@ fun BackupSettingsScreen(
         AlertDialog(
             onDismissRequest = onCloseRestorePreview,
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Backup Preview & Selective Restore", color = MaterialTheme.colorScheme.onSurface) },
+            title = { Text(novaText(isArabic, "Backup Preview & Selective Restore", "معاينة النسخة الاحتياطية والاستعادة الانتقائية"), color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -436,7 +437,7 @@ fun BackupSettingsScreen(
                             },
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                         )
-                        Text("1. Restore Entire Application", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
+                        Text(novaText(isArabic, "1. Restore Entire Application", "1. استعادة التطبيق بالكامل"), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.SemiBold)
                     }
 
                     if (!restoreAll) {
@@ -446,7 +447,7 @@ fun BackupSettingsScreen(
                                 onCheckedChange = { restoreFolders = it },
                                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                             )
-                            Text("2. Restore Folders (${selectedFolderIds.size}/${previewPayload.folders.size})", color = MaterialTheme.colorScheme.onSurface)
+                            Text(novaText(isArabic, "2. Restore Folders (${selectedFolderIds.size}/${previewPayload.folders.size})", "2. استعادة المجلدات (${selectedFolderIds.size}/${previewPayload.folders.size})"), color = MaterialTheme.colorScheme.onSurface)
                         }
                         if (restoreFolders && previewPayload.folders.isNotEmpty()) {
                             previewPayload.folders.forEach { folder ->
@@ -471,7 +472,7 @@ fun BackupSettingsScreen(
                                 onCheckedChange = { restoreNotes = it },
                                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                             )
-                            Text("3. Restore Notes (${selectedNoteIds.size}/${previewPayload.notes.size})", color = MaterialTheme.colorScheme.onSurface)
+                            Text(novaText(isArabic, "3. Restore Notes (${selectedNoteIds.size}/${previewPayload.notes.size})", "3. استعادة الملاحظات (${selectedNoteIds.size}/${previewPayload.notes.size})"), color = MaterialTheme.colorScheme.onSurface)
                         }
                         if (restoreNotes && previewPayload.notes.isNotEmpty()) {
                             previewPayload.notes.take(12).forEach { note ->
@@ -500,7 +501,7 @@ fun BackupSettingsScreen(
                                 onCheckedChange = { restoreTemplates = it },
                                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                             )
-                            Text("4. Restore Modeling Templates (${previewPayload.templates.size})", color = MaterialTheme.colorScheme.onSurface)
+                            Text(novaText(isArabic, "4. Restore Modeling Templates (${previewPayload.templates.size})", "4. استعادة قوالب التنسيق (${previewPayload.templates.size})"), color = MaterialTheme.colorScheme.onSurface)
                         }
 
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -509,7 +510,7 @@ fun BackupSettingsScreen(
                                 onCheckedChange = { restoreSettings = it },
                                 colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                             )
-                            Text("5. Restore Application Settings", color = MaterialTheme.colorScheme.onSurface)
+                            Text(novaText(isArabic, "5. Restore Application Settings", "5. استعادة إعدادات التطبيق"), color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
@@ -533,12 +534,12 @@ fun BackupSettingsScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("confirm_restore_backup_button")
                 ) {
-                    Text("Confirm Restore", fontWeight = FontWeight.Bold)
+                    Text(novaText(isArabic, "Confirm Restore", "تأكيد الاستعادة"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = onCloseRestorePreview) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -549,7 +550,7 @@ fun BackupSettingsScreen(
         AlertDialog(
             onDismissRequest = { showPinDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text("Configure Local PIN Lock", color = MaterialTheme.colorScheme.onSurface) },
+            title = { Text(novaText(isArabic, "Configure Local PIN Lock", "إعداد قفل PIN المحلي"), color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(
@@ -560,7 +561,7 @@ fun BackupSettingsScreen(
                     OutlinedTextField(
                         value = pinInput,
                         onValueChange = { pinInput = it.filter { c -> c.isDigit() }.take(8) },
-                        label = { Text("PIN Code") },
+                        label = { Text(novaText(isArabic, "PIN Code", "رمز PIN")) },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().testTag("pin_code_input")
@@ -580,7 +581,7 @@ fun BackupSettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showPinDialog = false }) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
