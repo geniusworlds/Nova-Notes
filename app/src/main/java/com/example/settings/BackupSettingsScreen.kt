@@ -290,7 +290,7 @@ fun BackupSettingsScreen(
 
         // Saved Local Backup Versions List
         Text(
-            text = "Local Backup Versions (${backups.size})",
+            text = novaText(isArabic, "Local Backup Versions (\${backups.size})", "النسخ الاحتياطية المحلية (\${backups.size})"),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -341,7 +341,7 @@ fun BackupSettingsScreen(
                                 )
                             }
                             Text(
-                                text = "${(meta.fileSizeBytes / 1024).coerceAtLeast(1)} KB • SHA: ${meta.checksum}",
+                                text = novaText(isArabic, "\${(meta.fileSizeBytes / 1024).coerceAtLeast(1)} KB • SHA: \${meta.checksum}", "\${(meta.fileSizeBytes / 1024).coerceAtLeast(1)} كيلوبايت • بصمة SHA: \${meta.checksum}"),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -349,7 +349,7 @@ fun BackupSettingsScreen(
 
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "${meta.noteCount} Notes • ${meta.folderCount} Folders • ${meta.todoCount} Tasks • ${meta.templateCount} Templates",
+                            text = novaText(isArabic, "\${meta.noteCount} Notes • \${meta.folderCount} Folders • \${meta.todoCount} Tasks • \${meta.templateCount} Templates", "\${meta.noteCount} ملاحظة • \${meta.folderCount} مجلد • \${meta.todoCount} مهمة • \${meta.templateCount} قالب"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
