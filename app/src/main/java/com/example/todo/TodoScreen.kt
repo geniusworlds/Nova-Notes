@@ -56,17 +56,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.database.TodoEntity
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
-import com.example.ui.theme.ObsidianBlack
+import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.surface
+import com.example.ui.theme.MaterialTheme.colorScheme.primary
+import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
+import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
-import com.example.ui.theme.SurfaceBorder
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.MaterialTheme.colorScheme.outline
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
+import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 
 @Composable
 fun TodoScreen(
@@ -102,7 +102,7 @@ fun TodoScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .testTag("todo_screen")
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -117,13 +117,13 @@ fun TodoScreen(
                     Text(
                         text = "TO-DO & TASKS",
                         style = MaterialTheme.typography.headlineMedium,
-                        color = TextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "${todos.size - completedCount} active • $completedCount completed",
                         style = MaterialTheme.typography.bodySmall,
-                        color = NovaCyan
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -152,10 +152,10 @@ fun TodoScreen(
                         onClick = { selectedCategory = cat },
                         label = { Text(cat) },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = CardDarkGray,
-                            labelColor = TextSecondary,
-                            selectedContainerColor = NovaDeepTeal,
-                            selectedLabelColor = NovaCyan
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.primary
                         )
                     )
                 }
@@ -169,9 +169,9 @@ fun TodoScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("No Tasks in This View", style = MaterialTheme.typography.titleLarge, color = TextWhite)
+                        Text("No Tasks in This View", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurface)
                         Spacer(modifier = Modifier.height(6.dp))
-                        Text("Add structured tasks, descriptions, and categories.", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+                        Text("Add structured tasks, descriptions, and categories.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             } else {
@@ -188,11 +188,11 @@ fun TodoScreen(
                             modifier = Modifier.fillMaxWidth().testTag("todo_item_${todo.id}"),
                             shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = if (todo.isCompleted) CardDarkGray.copy(alpha = 0.6f) else CardDarkGray
+                                containerColor = if (todo.isCompleted) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceVariant
                             ),
                             border = BorderStroke(
                                 1.dp,
-                                if (todo.isCompleted) SurfaceBorder.copy(alpha = 0.5f) else NovaCyan.copy(alpha = 0.3f)
+                                if (todo.isCompleted) MaterialTheme.colorScheme.outline.copy(alpha = 0.5f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                             )
                         ) {
                             Row(
@@ -206,7 +206,7 @@ fun TodoScreen(
                                     Icon(
                                         imageVector = if (todo.isCompleted) Icons.Default.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
                                         contentDescription = "Complete Task",
-                                        tint = if (todo.isCompleted) StatusSuccess else NovaCyan
+                                        tint = if (todo.isCompleted) StatusSuccess else MaterialTheme.colorScheme.primary
                                     )
                                 }
 
@@ -228,29 +228,29 @@ fun TodoScreen(
                                             style = MaterialTheme.typography.titleMedium.copy(
                                                 textDecoration = if (todo.isCompleted) TextDecoration.LineThrough else TextDecoration.None
                                             ),
-                                            color = if (todo.isCompleted) TextMuted else TextWhite
+                                            color = if (todo.isCompleted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
                                         )
-                                        Surface(color = NovaDeepTeal.copy(alpha = 0.6f), shape = RoundedCornerShape(6.dp)) {
+                                        Surface(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f), shape = RoundedCornerShape(6.dp)) {
                                             Text(
                                                 text = todo.category,
                                                 style = MaterialTheme.typography.labelSmall,
-                                                color = NovaCyan,
+                                                color = MaterialTheme.colorScheme.primary,
                                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                             )
                                         }
                                     }
                                     if (todo.description.isNotBlank()) {
                                         Spacer(modifier = Modifier.height(4.dp))
-                                        Text(text = todo.description, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                                        Text(text = todo.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                     }
                                 }
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     IconButton(onClick = { onMoveOrder(todo, true) }, modifier = Modifier.size(32.dp)) {
-                                        Icon(Icons.Default.ArrowUpward, contentDescription = "Move Up", tint = TextSecondary, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.ArrowUpward, contentDescription = "Move Up", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(onClick = { onMoveOrder(todo, false) }, modifier = Modifier.size(32.dp)) {
-                                        Icon(Icons.Default.ArrowDownward, contentDescription = "Move Down", tint = TextSecondary, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.ArrowDownward, contentDescription = "Move Down", tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(
                                         onClick = {
@@ -259,7 +259,7 @@ fun TodoScreen(
                                         },
                                         modifier = Modifier.size(32.dp)
                                     ) {
-                                        Icon(Icons.Default.Edit, contentDescription = "Edit Task", tint = NovaCyan, modifier = Modifier.size(16.dp))
+                                        Icon(Icons.Default.Edit, contentDescription = "Edit Task", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                                     }
                                     IconButton(
                                         onClick = { onDeleteTodo(todo) },
@@ -280,8 +280,8 @@ fun TodoScreen(
                 editingTodo = null
                 showEditorDialog = true
             },
-            containerColor = NovaCyan,
-            contentColor = ObsidianBlack,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.background,
             shape = RoundedCornerShape(18.dp),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -303,8 +303,8 @@ fun TodoScreen(
 
         AlertDialog(
             onDismissRequest = { showEditorDialog = false },
-            containerColor = CardElevatedGray,
-            title = { Text(if (editingTodo == null) "New Task" else "Edit Task", color = TextWhite) },
+            containerColor = MaterialTheme.colorScheme.surface,
+            title = { Text(if (editingTodo == null) "New Task" else "Edit Task", color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedTextField(
@@ -338,7 +338,7 @@ fun TodoScreen(
                             showEditorDialog = false
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("save_todo_button")
                 ) {
                     Text("Save Task", fontWeight = FontWeight.Bold)
@@ -346,7 +346,7 @@ fun TodoScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showEditorDialog = false }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text("Cancel", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
