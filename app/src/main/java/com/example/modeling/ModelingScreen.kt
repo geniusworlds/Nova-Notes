@@ -130,13 +130,13 @@ fun ModelingScreen(
         ) {
             Column {
                 Text(
-                    text = novaText(isArabic, "MODELING ENGINE", "محرك تنسيق البيانات"),
+                    text = novaText(LocalNovaArabic.current, "MODELING ENGINE", "محرك تنسيق البيانات"),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = novaText(isArabic, "Valid: ${result.validCount} • Invalid: ${result.invalidCount} • Dup: ${result.duplicateCount} • Groups: ${result.groups.size}", "صحيح: ${result.validCount} • غير صحيح: ${result.invalidCount} • مكرر: ${result.duplicateCount} • المجموعات: ${result.groups.size}"),
+                    text = novaText(LocalNovaArabic.current, "Valid: ${result.validCount} • Invalid: ${result.invalidCount} • Dup: ${result.duplicateCount} • Groups: ${result.groups.size}", "صحيح: ${result.validCount} • غير صحيح: ${result.invalidCount} • مكرر: ${result.duplicateCount} • المجموعات: ${result.groups.size}"),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -151,7 +151,7 @@ fun ModelingScreen(
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(15.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Reset", "إعادة ضبط"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(LocalNovaArabic.current, "Reset", "إعادة ضبط"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
 
                 Button(
@@ -162,7 +162,7 @@ fun ModelingScreen(
                 ) {
                     Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Process", "معالجة"), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                    Text(novaText(LocalNovaArabic.current, "Process", "معالجة"), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -177,7 +177,7 @@ fun ModelingScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(novaText(isArabic, "Template:", "القالب:"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(novaText(LocalNovaArabic.current, "Template:", "القالب:"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
             templates.forEach { tmpl ->
                 val selected = activeTemplate.id == tmpl.id && activeTemplate.name == tmpl.name
                 FilterChip(
@@ -240,19 +240,19 @@ fun ModelingScreen(
             Tab(
                 selected = modelingState.activeSubTab == 0,
                 onClick = { onSelectSubTab(0) },
-                text = { Text(novaText(isArabic, "Input & Controls", "الإدخال والتحكم")) },
+                text = { Text(novaText(LocalNovaArabic.current, "Input & Controls", "الإدخال والتحكم")) },
                 modifier = Modifier.testTag("modeling_tab_input")
             )
             Tab(
                 selected = modelingState.activeSubTab == 1,
                 onClick = { onSelectSubTab(1) },
-                text = { Text(novaText(isArabic, "Live Preview (${result.groups.size})", "معاينة مباشرة (${result.groups.size})")) },
+                text = { Text(novaText(LocalNovaArabic.current, "Live Preview (${result.groups.size})", "معاينة مباشرة (${result.groups.size})")) },
                 modifier = Modifier.testTag("modeling_tab_preview")
             )
             Tab(
                 selected = modelingState.activeSubTab == 2,
                 onClick = { onSelectSubTab(2) },
-                text = { Text(novaText(isArabic, "Template Builder", "منشئ القوالب")) },
+                text = { Text(novaText(LocalNovaArabic.current, "Template Builder", "منشئ القوالب")) },
                 modifier = Modifier.testTag("modeling_tab_builder")
             )
         }
@@ -349,12 +349,12 @@ fun ModelingScreen(
         AlertDialog(
             onDismissRequest = { editingLineRecord = null },
             containerColor = MaterialTheme.colorScheme.surface,
-            title = { Text(novaText(isArabic, "Edit Record Line #${rec.originalIndex}", "تعديل السجل رقم ${rec.originalIndex}"), color = MaterialTheme.colorScheme.onSurface) },
+            title = { Text(novaText(LocalNovaArabic.current, "Edit Record Line #${rec.originalIndex}", "تعديل السجل رقم ${rec.originalIndex}"), color = MaterialTheme.colorScheme.onSurface) },
             text = {
                 OutlinedTextField(
                     value = updatedLine,
                     onValueChange = { updatedLine = it },
-                    label = { Text(novaText(isArabic, "Record Content", "محتوى السجل")) },
+                    label = { Text(novaText(LocalNovaArabic.current, "Record Content", "محتوى السجل")) },
                     modifier = Modifier.fillMaxWidth().testTag("edit_single_record_input")
                 )
             },
@@ -366,12 +366,12 @@ fun ModelingScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background)
                 ) {
-                    Text(novaText(isArabic, "Update & Reprocess", "تحديث وإعادة المعالجة"), fontWeight = FontWeight.Bold)
+                    Text(novaText(LocalNovaArabic.current, "Update & Reprocess", "تحديث وإعادة المعالجة"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { editingLineRecord = null }) {
-                    Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(LocalNovaArabic.current, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -406,7 +406,7 @@ private fun ModelingInputAndConfigPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = novaText(isArabic, "Structured Input (${result.totalInputLines} lines)", "المدخلات المنظمة (${result.totalInputLines} سطراً)"),
+                text = novaText(LocalNovaArabic.current, "Structured Input (${result.totalInputLines} lines)", "المدخلات المنظمة (${result.totalInputLines} سطراً)"),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -418,7 +418,7 @@ private fun ModelingInputAndConfigPanel(
                 ) {
                     Icon(Icons.Default.ContentPaste, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Paste", "لصق"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text(novaText(LocalNovaArabic.current, "Paste", "لصق"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
                 OutlinedButton(
                     onClick = {
@@ -428,14 +428,14 @@ private fun ModelingInputAndConfigPanel(
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_load_50_button")
                 ) {
-                    Text(novaText(isArabic, "Load 50", "تحميل 50"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text(novaText(LocalNovaArabic.current, "Load 50", "تحميل 50"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
                 OutlinedButton(
                     onClick = { onInputChanged("") },
                     contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
                     modifier = Modifier.testTag("modeling_clear_input_button")
                 ) {
-                    Text(novaText(isArabic, "Clear", "مسح"), style = MaterialTheme.typography.labelSmall, color = StatusError)
+                    Text(novaText(LocalNovaArabic.current, "Clear", "مسح"), style = MaterialTheme.typography.labelSmall, color = StatusError)
                 }
             }
         }
@@ -477,7 +477,7 @@ private fun ModelingInputAndConfigPanel(
             ) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = novaText(isArabic, "Validation & Duplicate Diagnostics (Tap to edit record)", "فحص الصحة والتكرارات (اضغط لتعديل السجل)"),
+                        text = novaText(LocalNovaArabic.current, "Validation & Duplicate Diagnostics (Tap to edit record)", "فحص الصحة والتكرارات (اضغط لتعديل السجل)"),
                         style = MaterialTheme.typography.labelLarge,
                         color = StatusWarning
                     )
@@ -518,7 +518,7 @@ private fun ModelingInputAndConfigPanel(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(novaText(isArabic, "Live Modeling Configuration", "إعدادات تنسيق البيانات المباشر"), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                Text(novaText(LocalNovaArabic.current, "Live Modeling Configuration", "إعدادات تنسيق البيانات المباشر"), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
 
                 // Date Configuration Row
                 Row(
@@ -529,7 +529,7 @@ private fun ModelingInputAndConfigPanel(
                     OutlinedTextField(
                         value = tmpl.startDateStr,
                         onValueChange = { newDate -> onUpdateConfig { it.copy(startDateStr = newDate) } },
-                        label = { Text(novaText(isArabic, "Start Date (DD/MM/YYYY)", "تاريخ البداية (يوم/شهر/سنة)")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "Start Date (DD/MM/YYYY)", "تاريخ البداية (يوم/شهر/سنة)")) },
                         singleLine = true,
                         modifier = Modifier.weight(1f).testTag("modeling_start_date_input")
                     )
@@ -541,7 +541,7 @@ private fun ModelingInputAndConfigPanel(
                             onUpdateConfig { it.copy(dateMode = nextMode) }
                         },
                         label = {
-                            Text(if (tmpl.dateMode.uppercase() == "INCREMENT_DAY") novaText(isArabic, "+1 Day / Group", "+ يوم لكل مجموعة") else novaText(isArabic, "Fixed Date", "تاريخ ثابت"))
+                            Text(if (tmpl.dateMode.uppercase() == "INCREMENT_DAY") novaText(LocalNovaArabic.current, "+1 Day / Group", "+ يوم لكل مجموعة") else novaText(LocalNovaArabic.current, "Fixed Date", "تاريخ ثابت"))
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -565,7 +565,7 @@ private fun ModelingInputAndConfigPanel(
                     FilterChip(
                         selected = tmpl.showDateOnEveryGroup,
                         onClick = { onUpdateConfig { it.copy(showDateOnEveryGroup = !it.showDateOnEveryGroup) } },
-                        label = { Text(novaText(isArabic, "Date [ ${tmpl.startDateStr} ] on Every Group", "التاريخ [ ${tmpl.startDateStr} ] في كل مجموعة")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "Date [ ${tmpl.startDateStr} ] on Every Group", "التاريخ [ ${tmpl.startDateStr} ] في كل مجموعة")) },
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                             labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -578,7 +578,7 @@ private fun ModelingInputAndConfigPanel(
                     FilterChip(
                         selected = tmpl.combineGroupsIntoOneList,
                         onClick = { onUpdateConfig { it.copy(combineGroupsIntoOneList = !it.combineGroupsIntoOneList) } },
-                        label = { Text(novaText(isArabic, "Groups on One List", "المجموعات في قائمة واحدة")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "Groups on One List", "المجموعات في قائمة واحدة")) },
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                             labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -590,7 +590,7 @@ private fun ModelingInputAndConfigPanel(
                 }
 
                 // Sorting Controls
-                Text(novaText(isArabic, "Record Ordering & Sorting", "ترتيب السجلات وفرزها"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(novaText(LocalNovaArabic.current, "Record Ordering & Sorting", "ترتيب السجلات وفرزها"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Row(
                     modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -627,7 +627,7 @@ private fun ModelingInputAndConfigPanel(
                                 onUpdateConfig { it.copy(recordsPerGroup = parsed) }
                             }
                         },
-                        label = { Text(novaText(isArabic, "Records/Group", "السجلات/المجموعة")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "Records/Group", "السجلات/المجموعة")) },
                         singleLine = true,
                         modifier = Modifier.weight(1f).testTag("modeling_records_per_group_input")
                     )
@@ -640,7 +640,7 @@ private fun ModelingInputAndConfigPanel(
                                     onUpdateConfig { it.copy(parentIndexInGroup = parsed) }
                                 }
                             },
-                            label = { Text(novaText(isArabic, "Parent Index (0-based)", "فهرس العنصر الأب (يبدأ من صفر)")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Parent Index (0-based)", "فهرس العنصر الأب (يبدأ من صفر)")) },
                             singleLine = true,
                             modifier = Modifier.weight(1f).testTag("modeling_parent_index_input")
                         )
@@ -655,14 +655,14 @@ private fun ModelingInputAndConfigPanel(
                         OutlinedTextField(
                             value = tmpl.parentLabel,
                             onValueChange = { v -> onUpdateConfig { it.copy(parentLabel = v) } },
-                            label = { Text(novaText(isArabic, "Parent Label", "عنوان العنصر الأب")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Parent Label", "عنوان العنصر الأب")) },
                             singleLine = true,
                             modifier = Modifier.weight(1f).testTag("modeling_parent_label_input")
                         )
                         OutlinedTextField(
                             value = tmpl.childLabel,
                             onValueChange = { v -> onUpdateConfig { it.copy(childLabel = v) } },
-                            label = { Text(novaText(isArabic, "Child Label", "عنوان العنصر الفرعي")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Child Label", "عنوان العنصر الفرعي")) },
                             singleLine = true,
                             modifier = Modifier.weight(1f).testTag("modeling_child_label_input")
                         )
@@ -679,7 +679,7 @@ private fun ModelingInputAndConfigPanel(
                         onValueChange = { v ->
                             v.toIntOrNull()?.let { num -> onUpdateConfig { it.copy(startNumber = num) } }
                         },
-                        label = { Text(novaText(isArabic, "Start #", "رقم البداية")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "Start #", "رقم البداية")) },
                         singleLine = true,
                         modifier = Modifier.weight(1f).testTag("modeling_start_number_input")
                     )
@@ -689,7 +689,7 @@ private fun ModelingInputAndConfigPanel(
                             val end = if (v.isBlank()) null else v.toIntOrNull()
                             onUpdateConfig { it.copy(endNumber = end) }
                         },
-                        label = { Text(novaText(isArabic, "End # (Optional)", "رقم النهاية (اختياري)")) },
+                        label = { Text(novaText(LocalNovaArabic.current, "End # (Optional)", "رقم النهاية (اختياري)")) },
                         singleLine = true,
                         modifier = Modifier.weight(1f).testTag("modeling_end_number_input")
                     )
@@ -698,7 +698,7 @@ private fun ModelingInputAndConfigPanel(
                 OutlinedTextField(
                     value = tmpl.separatorLine,
                     onValueChange = { v -> onUpdateConfig { it.copy(separatorLine = v) } },
-                    label = { Text(novaText(isArabic, "Custom Divider / Separator Line", "فاصل مخصص بين السجلات")) },
+                    label = { Text(novaText(LocalNovaArabic.current, "Custom Divider / Separator Line", "فاصل مخصص بين السجلات")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().testTag("modeling_separator_input")
                 )
@@ -716,7 +716,7 @@ private fun ModelingInputAndConfigPanel(
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_arabic_numerals_checkbox")
                         )
-                        Text(novaText(isArabic, "Arabic Numerals (١٢٣)", "الأرقام العربية (١٢٣)"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(LocalNovaArabic.current, "Arabic Numerals (١٢٣)", "الأرقام العربية (١٢٣)"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -726,7 +726,7 @@ private fun ModelingInputAndConfigPanel(
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_remove_empty_checkbox")
                         )
-                        Text(novaText(isArabic, "Ignore Empty Lines", "تجاهل الأسطر الفارغة"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(LocalNovaArabic.current, "Ignore Empty Lines", "تجاهل الأسطر الفارغة"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -736,7 +736,7 @@ private fun ModelingInputAndConfigPanel(
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("modeling_restart_numbering_checkbox")
                         )
-                        Text(novaText(isArabic, "Restart # Per Group", "إعادة الترقيم في كل مجموعة"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(LocalNovaArabic.current, "Restart # Per Group", "إعادة الترقيم في كل مجموعة"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             }
@@ -767,7 +767,7 @@ private fun ModelingLivePreviewPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = novaText(isArabic, "Live Output (${result.groups.size} groups • ${result.processingTimeMs} ms)", "المخرجات المباشرة (${result.groups.size} مجموعات • ${result.processingTimeMs} مللي ثانية)"),
+                text = novaText(LocalNovaArabic.current, "Live Output (${result.groups.size} groups • ${result.processingTimeMs} ms)", "المخرجات المباشرة (${result.groups.size} مجموعات • ${result.processingTimeMs} مللي ثانية)"),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -780,7 +780,7 @@ private fun ModelingLivePreviewPanel(
                 ) {
                     Icon(Icons.Default.ContentCopy, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Copy All", "نسخ الكل"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    Text(novaText(LocalNovaArabic.current, "Copy All", "نسخ الكل"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                 }
 
                 OutlinedButton(
@@ -790,7 +790,7 @@ private fun ModelingLivePreviewPanel(
                 ) {
                     Icon(Icons.Default.Save, contentDescription = null, tint = StatusSuccess, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Save Note", "حفظ كملاحظة"), style = MaterialTheme.typography.labelSmall, color = StatusSuccess)
+                    Text(novaText(LocalNovaArabic.current, "Save Note", "حفظ كملاحظة"), style = MaterialTheme.typography.labelSmall, color = StatusSuccess)
                 }
 
                 Box {
@@ -801,7 +801,7 @@ private fun ModelingLivePreviewPanel(
                     ) {
                         Icon(Icons.Default.FileDownload, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(14.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(novaText(isArabic, "Export", "تصدير"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
+                        Text(novaText(LocalNovaArabic.current, "Export", "تصدير"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurface)
                     }
                     DropdownMenu(
                         expanded = showExportMenu,
@@ -810,7 +810,7 @@ private fun ModelingLivePreviewPanel(
                     ) {
                         listOf("TXT", "PDF", "JSON", "CSV").forEach { fmt ->
                             DropdownMenuItem(
-                                text = { Text(novaText(isArabic, "Export Result as $fmt", "تصدير النتيجة بصيغة $fmt"), color = MaterialTheme.colorScheme.onSurface) },
+                                text = { Text(novaText(LocalNovaArabic.current, "Export Result as $fmt", "تصدير النتيجة بصيغة $fmt"), color = MaterialTheme.colorScheme.onSurface) },
                                 onClick = {
                                     onToggleExportMenu(false)
                                     onExportFormat(fmt)
@@ -827,7 +827,7 @@ private fun ModelingLivePreviewPanel(
         if (result.groups.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
-                    text = novaText(isArabic, "Enter records in the Input panel to see real-time formatted output.", "أدخل السجلات في لوحة الإدخال لمشاهدة النتائج المنسقة فورياً."),
+                    text = novaText(LocalNovaArabic.current, "Enter records in the Input panel to see real-time formatted output.", "أدخل السجلات في لوحة الإدخال لمشاهدة النتائج المنسقة فورياً."),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -857,7 +857,7 @@ private fun ModelingLivePreviewPanel(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = novaText(isArabic, "Group #${group.groupNumber} • Date: ${group.dateString}", "المجموعة رقم ${group.groupNumber} • التاريخ: ${group.dateString}"),
+                                    text = novaText(LocalNovaArabic.current, "Group #${group.groupNumber} • Date: ${group.dateString}", "المجموعة رقم ${group.groupNumber} • التاريخ: ${group.dateString}"),
                                     style = MaterialTheme.typography.labelLarge,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -869,7 +869,7 @@ private fun ModelingLivePreviewPanel(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.ContentCopy,
-                                        contentDescription = novaText(isArabic, "Copy Group", "نسخ المجموعة"),
+                                        contentDescription = novaText(LocalNovaArabic.current, "Copy Group", "نسخ المجموعة"),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(15.dp)
                                     )
@@ -917,7 +917,7 @@ private fun CustomTemplateBuilderPanel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(novaText(isArabic, "Custom Template Visual Builder", "منشئ القوالب المخصص"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                Text(novaText(LocalNovaArabic.current, "Custom Template Visual Builder", "منشئ القوالب المخصص"), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                 Text(
                     "Click any placeholder chip below to insert into patterns",
                     style = MaterialTheme.typography.bodySmall,
@@ -926,10 +926,10 @@ private fun CustomTemplateBuilderPanel(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 IconButton(onClick = onImportTemplatesDialogRequest, modifier = Modifier.testTag("import_templates_button")) {
-                    Icon(Icons.Default.FileUpload, contentDescription = novaText(isArabic, "Import Templates", "استيراد القوالب"), tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Default.FileUpload, contentDescription = novaText(LocalNovaArabic.current, "Import Templates", "استيراد القوالب"), tint = MaterialTheme.colorScheme.primary)
                 }
                 IconButton(onClick = onExportTemplatesJson, modifier = Modifier.testTag("export_templates_button")) {
-                    Icon(Icons.Default.FileDownload, contentDescription = novaText(isArabic, "Export Templates", "تصدير القوالب"), tint = MaterialTheme.colorScheme.primary)
+                    Icon(Icons.Default.FileDownload, contentDescription = novaText(LocalNovaArabic.current, "Export Templates", "تصدير القوالب"), tint = MaterialTheme.colorScheme.primary)
                 }
             }
         }
@@ -966,14 +966,14 @@ private fun CustomTemplateBuilderPanel(
             OutlinedTextField(
                 value = activeTemplate.name,
                 onValueChange = { v -> onUpdateConfig { it.copy(name = v) } },
-                label = { Text(novaText(isArabic, "Template Name", "اسم القالب")) },
+                label = { Text(novaText(LocalNovaArabic.current, "Template Name", "اسم القالب")) },
                 singleLine = true,
                 modifier = Modifier.weight(1f).testTag("builder_template_name_input")
             )
             OutlinedTextField(
                 value = activeTemplate.category,
                 onValueChange = { v -> onUpdateConfig { it.copy(category = v) } },
-                label = { Text(novaText(isArabic, "Category", "التصنيف")) },
+                label = { Text(novaText(LocalNovaArabic.current, "Category", "التصنيف")) },
                 singleLine = true,
                 modifier = Modifier.weight(1f).testTag("builder_template_category_input")
             )
@@ -997,7 +997,7 @@ private fun CustomTemplateBuilderPanel(
         OutlinedTextField(
             value = activeTemplate.headerPattern,
             onValueChange = { v -> onUpdateConfig { it.copy(headerPattern = v, templateType = "CUSTOM") } },
-            label = { Text(novaText(isArabic, "Group Header Pattern (supports {date}, {group_number}, {separator})", "نمط عنوان المجموعة (يدعم {date} و{group_number} و{separator})")) },
+            label = { Text(novaText(LocalNovaArabic.current, "Group Header Pattern (supports {date}, {group_number}, {separator})", "نمط عنوان المجموعة (يدعم {date} و{group_number} و{separator})")) },
             minLines = 2,
             modifier = Modifier.fillMaxWidth().testTag("builder_header_pattern_input")
         )
@@ -1005,7 +1005,7 @@ private fun CustomTemplateBuilderPanel(
         OutlinedTextField(
             value = activeTemplate.parentPattern,
             onValueChange = { v -> onUpdateConfig { it.copy(parentPattern = v, templateType = "CUSTOM") } },
-            label = { Text(novaText(isArabic, "Parent Record Pattern (supports {parent_label}, {parent}, {separator})", "نمط السجل الأب (يدعم {parent_label} و{parent} و{separator})")) },
+            label = { Text(novaText(LocalNovaArabic.current, "Parent Record Pattern (supports {parent_label}, {parent}, {separator})", "نمط السجل الأب (يدعم {parent_label} و{parent} و{separator})")) },
             minLines = 2,
             modifier = Modifier.fillMaxWidth().testTag("builder_parent_pattern_input")
         )
@@ -1013,7 +1013,7 @@ private fun CustomTemplateBuilderPanel(
         OutlinedTextField(
             value = activeTemplate.itemPattern,
             onValueChange = { v -> onUpdateConfig { it.copy(itemPattern = v, templateType = "CUSTOM") } },
-            label = { Text(novaText(isArabic, "Item / Child Pattern (supports {number}, {child_label}, {child}, {record})", "نمط العنصر الفرعي (يدعم {number} و{child_label} و{child} و{record})")) },
+            label = { Text(novaText(LocalNovaArabic.current, "Item / Child Pattern (supports {number}, {child_label}, {child}, {record})", "نمط العنصر الفرعي (يدعم {number} و{child_label} و{child} و{record})")) },
             minLines = 2,
             modifier = Modifier.fillMaxWidth().testTag("builder_item_pattern_input")
         )
@@ -1021,7 +1021,7 @@ private fun CustomTemplateBuilderPanel(
         OutlinedTextField(
             value = activeTemplate.footerPattern,
             onValueChange = { v -> onUpdateConfig { it.copy(footerPattern = v, templateType = "CUSTOM") } },
-            label = { Text(novaText(isArabic, "Group Footer Pattern (Optional)", "نمط خاتمة المجموعة (اختياري)")) },
+            label = { Text(novaText(LocalNovaArabic.current, "Group Footer Pattern (Optional)", "نمط خاتمة المجموعة (اختياري)")) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth().testTag("builder_footer_pattern_input")
         )
@@ -1030,14 +1030,14 @@ private fun CustomTemplateBuilderPanel(
             OutlinedTextField(
                 value = activeTemplate.prefixText,
                 onValueChange = { v -> onUpdateConfig { it.copy(prefixText = v) } },
-                label = { Text(novaText(isArabic, "Record Prefix", "بادئة السجل")) },
+                label = { Text(novaText(LocalNovaArabic.current, "Record Prefix", "بادئة السجل")) },
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
             OutlinedTextField(
                 value = activeTemplate.suffixText,
                 onValueChange = { v -> onUpdateConfig { it.copy(suffixText = v) } },
-                label = { Text(novaText(isArabic, "Record Suffix", "لاحقة السجل")) },
+                label = { Text(novaText(LocalNovaArabic.current, "Record Suffix", "لاحقة السجل")) },
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
@@ -1062,7 +1062,7 @@ private fun CustomTemplateBuilderPanel(
             ) {
                 Icon(Icons.Default.Save, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(novaText(isArabic, "Save Template", "حفظ القالب"), fontWeight = FontWeight.Bold)
+                Text(novaText(LocalNovaArabic.current, "Save Template", "حفظ القالب"), fontWeight = FontWeight.Bold)
             }
 
             OutlinedButton(
@@ -1080,7 +1080,7 @@ private fun CustomTemplateBuilderPanel(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(novaText(isArabic, "Create New", "إنشاء جديد"), color = MaterialTheme.colorScheme.primary)
+                Text(novaText(LocalNovaArabic.current, "Create New", "إنشاء جديد"), color = MaterialTheme.colorScheme.primary)
             }
 
             OutlinedButton(
@@ -1089,7 +1089,7 @@ private fun CustomTemplateBuilderPanel(
             ) {
                 Icon(Icons.Default.ContentCopy, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(novaText(isArabic, "Duplicate", "نسخ"), color = MaterialTheme.colorScheme.onSurface)
+                Text(novaText(LocalNovaArabic.current, "Duplicate", "نسخ"), color = MaterialTheme.colorScheme.onSurface)
             }
 
             OutlinedButton(
@@ -1098,7 +1098,7 @@ private fun CustomTemplateBuilderPanel(
             ) {
                 Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(novaText(isArabic, "Set Default", "تعيين كافتراضي"), color = MaterialTheme.colorScheme.primary)
+                Text(novaText(LocalNovaArabic.current, "Set Default", "تعيين كافتراضي"), color = MaterialTheme.colorScheme.primary)
             }
 
             if (!activeTemplate.isBuiltIn) {
@@ -1108,7 +1108,7 @@ private fun CustomTemplateBuilderPanel(
                 ) {
                     Icon(Icons.Default.Delete, contentDescription = null, tint = StatusError, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(novaText(isArabic, "Delete", "حذف"), color = StatusError)
+                    Text(novaText(LocalNovaArabic.current, "Delete", "حذف"), color = StatusError)
                 }
             }
         }
