@@ -86,15 +86,8 @@ import com.example.session_recovery.SessionRecoveryManager
 import com.example.session_recovery.novaDataStore
 import com.example.settings.BackupSettingsScreen
 import com.example.todo.TodoScreen
-import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.surface
-import com.example.ui.theme.MaterialTheme.colorScheme.primary
-import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
 import com.example.ui.theme.NovaNotesTheme
-import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
