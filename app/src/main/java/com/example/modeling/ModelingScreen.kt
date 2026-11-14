@@ -76,19 +76,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ModelingUiState
 import com.example.database.ModelingTemplateEntity
-import com.example.ui.theme.MaterialTheme.colorScheme.surfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.surface
 import com.example.ui.theme.JetBrainsMonoFontFamily
-import com.example.ui.theme.MaterialTheme.colorScheme.primary
-import com.example.ui.theme.MaterialTheme.colorScheme.primaryContainer
-import com.example.ui.theme.MaterialTheme.colorScheme.background
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
-import com.example.ui.theme.MaterialTheme.colorScheme.outline
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurfaceVariant
-import com.example.ui.theme.MaterialTheme.colorScheme.onSurface
 
 @Composable
 fun ModelingScreen(
