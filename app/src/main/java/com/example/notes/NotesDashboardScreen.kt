@@ -190,7 +190,7 @@ fun NotesDashboardScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "NOVA NOTES",
+                                text = novaText(isArabic, "NOVA NOTES", "نوفا للملاحظات"),
                                 style = MaterialTheme.typography.headlineMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Bold
@@ -578,7 +578,7 @@ private fun NoteCardItem(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Move to Trash",
+                                    contentDescription = novaText(isArabic, "Move to Trash", "نقل إلى سلة المحذوفات"),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(18.dp)
                                 )
@@ -652,7 +652,7 @@ private fun NoteCardItem(
                         if (isRtl) {
                             Surface(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f), shape = RoundedCornerShape(6.dp)) {
                                 Text(
-                                    text = "RTL",
+                                    text = novaText(isArabic, "RTL", "من اليمين لليسار"),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
