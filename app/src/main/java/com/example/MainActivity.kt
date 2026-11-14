@@ -260,32 +260,32 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                         NavigationBarItem(
                             selected = currentTab == MainTab.NOTES,
                             onClick = { viewModel.selectTab(MainTab.NOTES) },
-                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(isArabic, "Notes", "الملاحظات")) },
-                            label = { Text(if (isArabic) "الملاحظات" else novaText(isArabic, "Notes", "الملاحظات")) },
+                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
+                            label = { Text(if (isArabic) "الملاحظات" else novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_notes")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.TODO,
                             onClick = { viewModel.selectTab(MainTab.TODO) },
-                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(isArabic, "To-do", "المهام")) },
-                            label = { Text(if (isArabic) "المهام" else novaText(isArabic, "To-do", "المهام")) },
+                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(LocalNovaArabic.current, "To-do", "المهام")) },
+                            label = { Text(if (isArabic) "المهام" else novaText(LocalNovaArabic.current, "To-do", "المهام")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_todo")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.MODELING,
                             onClick = { viewModel.selectTab(MainTab.MODELING) },
-                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(isArabic, "Modeling", "تنسيق البيانات")) },
-                            label = { Text(if (isArabic) "تنسيق البيانات" else novaText(isArabic, "Modeling", "تنسيق البيانات")) },
+                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
+                            label = { Text(if (isArabic) "تنسيق البيانات" else novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_modeling")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
-                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(isArabic, "Backup", "الإعدادات والنسخ الاحتياطي")) },
-                            label = { Text(novaText(isArabic, "Settings", "الإعدادات")) },
+                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(LocalNovaArabic.current, "Backup", "الإعدادات والنسخ الاحتياطي")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Settings", "الإعدادات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_settings")
                         )
@@ -307,32 +307,32 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                         NavigationRailItem(
                             selected = currentTab == MainTab.NOTES,
                             onClick = { viewModel.selectTab(MainTab.NOTES) },
-                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(isArabic, "Notes", "الملاحظات")) },
-                            label = { Text(novaText(isArabic, "Notes", "الملاحظات")) },
+                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_notes")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.TODO,
                             onClick = { viewModel.selectTab(MainTab.TODO) },
-                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(isArabic, "To-do", "المهام")) },
-                            label = { Text(novaText(isArabic, "To-do", "المهام")) },
+                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(LocalNovaArabic.current, "To-do", "المهام")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "To-do", "المهام")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_todo")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.MODELING,
                             onClick = { viewModel.selectTab(MainTab.MODELING) },
-                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(isArabic, "Modeling", "تنسيق البيانات")) },
-                            label = { Text(novaText(isArabic, "Modeling", "تنسيق البيانات")) },
+                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_modeling")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
-                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(isArabic, "Backup", "الإعدادات والنسخ الاحتياطي")) },
-                            label = { Text(novaText(isArabic, "Settings", "الإعدادات")) },
+                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(LocalNovaArabic.current, "Backup", "الإعدادات والنسخ الاحتياطي")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Settings", "الإعدادات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_settings")
                         )
@@ -580,7 +580,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(novaText(isArabic, "Select File from Device Storage…", "اختر ملفاً من مساحة تخزين الجهاز…"), color = MaterialTheme.colorScheme.primary)
+                        Text(novaText(LocalNovaArabic.current, "Select File from Device Storage…", "اختر ملفاً من مساحة تخزين الجهاز…"), color = MaterialTheme.colorScheme.primary)
                     }
                     Text(
                         "Or paste content directly below (validated before import):",
@@ -590,7 +590,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                     OutlinedTextField(
                         value = rawImportText,
                         onValueChange = { rawImportText = it },
-                        placeholder = { Text(novaText(isArabic, "Paste TXT, JSON, or CSV content here…", "الصق محتوى TXT أو JSON أو CSV هنا…")) },
+                        placeholder = { Text(novaText(LocalNovaArabic.current, "Paste TXT, JSON, or CSV content here…", "الصق محتوى TXT أو JSON أو CSV هنا…")) },
                         minLines = 5,
                         maxLines = 10,
                         modifier = Modifier.fillMaxWidth().testTag("import_raw_text_input")
@@ -608,12 +608,12 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("confirm_import_button")
                 ) {
-                    Text(novaText(isArabic, "Validate & Import", "التحقق والاستيراد"), fontWeight = FontWeight.Bold)
+                    Text(novaText(LocalNovaArabic.current, "Validate & Import", "التحقق والاستيراد"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showImportTextDialog = null }) {
-                    Text(novaText(isArabic, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(novaText(LocalNovaArabic.current, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -672,8 +672,8 @@ private fun PinLockGateScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Text(novaText(isArabic, "NOVA NOTES LOCKED", "نوفا للملاحظات مقفل"), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
-            Text(novaText(isArabic, "Enter your offline PIN to unlock your notes", "أدخل رمز PIN لفتح ملاحظاتك"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(novaText(LocalNovaArabic.current, "NOVA NOTES LOCKED", "نوفا للملاحظات مقفل"), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
+            Text(novaText(LocalNovaArabic.current, "Enter your offline PIN to unlock your notes", "أدخل رمز PIN لفتح ملاحظاتك"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             OutlinedTextField(
                 value = pin,
@@ -681,7 +681,7 @@ private fun PinLockGateScreen(
                     pin = it.filter { c -> c.isDigit() }.take(8)
                     errorText = null
                 },
-                label = { Text(novaText(isArabic, "PIN", "رمز PIN")) },
+                label = { Text(novaText(LocalNovaArabic.current, "PIN", "رمز PIN")) },
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 modifier = Modifier.width(240.dp).testTag("unlock_pin_input")
@@ -700,7 +700,7 @@ private fun PinLockGateScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("unlock_pin_button")
             ) {
-                Text(novaText(isArabic, "Unlock", "فتح القفل"), fontWeight = FontWeight.Bold)
+                Text(novaText(LocalNovaArabic.current, "Unlock", "فتح القفل"), fontWeight = FontWeight.Bold)
             }
         }
     }
