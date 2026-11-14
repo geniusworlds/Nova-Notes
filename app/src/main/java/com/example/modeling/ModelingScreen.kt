@@ -77,6 +77,7 @@ import androidx.compose.ui.unit.sp
 import com.example.core.ModelingUiState
 import com.example.database.ModelingTemplateEntity
 import com.example.ui.theme.JetBrainsMonoFontFamily
+import com.example.ui.theme.LocalNovaArabic
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
@@ -102,6 +103,8 @@ fun ModelingScreen(
     onImportTemplatesDialogRequest: () -> Unit,
     onShowMessage: (String) -> Unit
 ) {
+    val isArabic = LocalNovaArabic.current
+
     val clipboard = LocalClipboardManager.current
     val result = modelingState.processResult
     val activeTemplate = modelingState.selectedTemplate
