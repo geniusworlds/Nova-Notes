@@ -301,7 +301,7 @@ fun BackupSettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "No local backups stored yet. Tap 'Create Backup Now' to snapshot all notes, folders, tasks, and templates.",
+                    text = novaText(isArabic, "No local backups stored yet. Tap 'Create Backup Now' to snapshot all notes, folders, tasks, and templates.", "لا توجد نسخ احتياطية محلية بعد. اضغط على «إنشاء نسخة احتياطية الآن» لحفظ الملاحظات والمجلدات والمهام والقوالب."),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp)
