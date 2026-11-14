@@ -332,7 +332,7 @@ fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boole
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
                             icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(isArabic, "Backup", "الإعدادات والنسخ الاحتياطي")) },
-                            label = { Text(novaText(isArabic, "Backup", "الإعدادات والنسخ الاحتياطي")) },
+                            label = { Text(novaText(isArabic, "Settings", "الإعدادات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_settings")
                         )
