@@ -541,7 +541,7 @@ private fun ModelingInputAndConfigPanel(
                             onUpdateConfig { it.copy(dateMode = nextMode) }
                         },
                         label = {
-                            Text(if (tmpl.dateMode.uppercase() == "INCREMENT_DAY") "+1 Day / Group" else "Fixed Date")
+                            Text(if (tmpl.dateMode.uppercase() == "INCREMENT_DAY") novaText(isArabic, "+1 Day / Group", "+ يوم لكل مجموعة") else novaText(isArabic, "Fixed Date", "تاريخ ثابت"))
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
