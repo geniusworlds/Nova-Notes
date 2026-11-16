@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -110,7 +107,6 @@ fun NoteEditorScreen(
 
     val clipboardManager = LocalClipboardManager.current
     val verticalScrollState = rememberScrollState(initial = editorState.verticalScrollOffset)
-    var contentTextLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     var contentFieldValue by remember(editorState.noteId) {
         mutableStateOf(
@@ -558,12 +554,37 @@ fun NoteEditorScreen(
                 BasicTextField(
                     value = contentFieldValue,
                     onValueChange = { newValue ->
-                        contentFieldValue = newValue
+                        // Keep Android's native double-tap gesture and expand its word selection
+                        // to the complete account line. This preserves the native selection handles
+                        // and contextual copy menu instead of intercepting touch events.
+                        val selectionStart = minOf(newValue.selection.start, newValue.selection.end)
+                        val selectionEnd = maxOf(newValue.selection.start, newValue.selection.end)
+                        val safeStart = selectionStart.coerceIn(0, newValue.text.length)
+                        val safeEnd = selectionEnd.coerceIn(0, newValue.text.length)
+                        val selectedText = newValue.text.substring(safeStart, safeEnd)
+                        val isSingleWordSelection = safeStart < safeEnd &&
+                            selectedText.isNotBlank() &&
+                            selectedText.none { it.isWhitespace() }
+
+                        val lineStart = if (safeStart == 0) 0
+                            else newValue.text.lastIndexOf('\n', safeStart - 1) + 1
+                        val nextLineBreak = newValue.text.indexOf('\n', safeEnd)
+                        val lineEnd = if (nextLineBreak < 0) newValue.text.length else nextLineBreak
+                        val accountLine = newValue.text.substring(lineStart, lineEnd)
+                        val containsEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+                            .containsMatchIn(accountLine)
+
+                        val updatedValue = if (isSingleWordSelection && containsEmail) {
+                            newValue.copy(selection = TextRange(lineStart, lineEnd))
+                        } else {
+                            newValue
+                        }
+                        contentFieldValue = updatedValue
                         onTextChanged(
                             editorState.title,
-                            newValue.text,
-                            newValue.selection.start,
-                            newValue.selection.end,
+                            updatedValue.text,
+                            updatedValue.selection.start,
+                            updatedValue.selection.end,
                             verticalScrollState.value
                         )
                     },
@@ -579,25 +600,7 @@ fun NoteEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(680.dp)
-                        .pointerInput(contentFieldValue.text) {
-                            detectTapGestures(onDoubleTap = { tapOffset ->
-                                val layout = contentTextLayout ?: return@detectTapGestures
-                                val text = contentFieldValue.text
-                                if (text.isEmpty()) return@detectTapGestures
-                                val offset = layout.getOffsetForPosition(tapOffset).coerceIn(0, text.length)
-                                val lineStart = if (offset == 0) 0 else text.lastIndexOf('\n', (offset - 1).coerceAtLeast(0)) + 1
-                                val nextBreak = text.indexOf('\n', offset)
-                                val lineEnd = if (nextBreak < 0) text.length else nextBreak
-                                val accountLine = text.substring(lineStart, lineEnd)
-                                val hasEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}").containsMatchIn(accountLine)
-                                if (hasEmail && lineEnd > lineStart) {
-                                    contentFieldValue = contentFieldValue.copy(selection = TextRange(lineStart, lineEnd))
-                                    onViewportChanged(lineStart, lineEnd, verticalScrollState.value)
-                                }
-                            })
-                        }
                         .testTag("note_content_input"),
-                    onTextLayout = { contentTextLayout = it },
                     decorationBox = { innerTextField ->
                         Box(modifier = Modifier.fillMaxSize()) {
                             if (contentFieldValue.text.isEmpty()) {
