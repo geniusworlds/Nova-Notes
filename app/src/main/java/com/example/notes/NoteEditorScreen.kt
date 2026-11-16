@@ -110,6 +110,7 @@ fun NoteEditorScreen(
 
     val clipboardManager = LocalClipboardManager.current
     val verticalScrollState = rememberScrollState(initial = editorState.verticalScrollOffset)
+    var contentTextLayout by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     var contentFieldValue by remember(editorState.noteId) {
         mutableStateOf(
