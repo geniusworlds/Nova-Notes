@@ -124,7 +124,7 @@ fun NoteEditorScreen(
     }
 
     val accountCount = remember(contentFieldValue.text) {
-        Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}")
+        Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
             .findAll(contentFieldValue.text)
             .count()
     }
@@ -588,7 +588,7 @@ fun NoteEditorScreen(
                                 val nextBreak = text.indexOf('\\n', offset)
                                 val lineEnd = if (nextBreak < 0) text.length else nextBreak
                                 val accountLine = text.substring(lineStart, lineEnd)
-                                val hasEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}").containsMatchIn(accountLine)
+                                val hasEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}").containsMatchIn(accountLine)
                                 if (hasEmail && lineEnd > lineStart) {
                                     contentFieldValue = contentFieldValue.copy(selection = TextRange(lineStart, lineEnd))
                                     onViewportChanged(lineStart, lineEnd, verticalScrollState.value)
