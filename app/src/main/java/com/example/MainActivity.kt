@@ -60,6 +60,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -82,15 +86,10 @@ import com.example.session_recovery.SessionRecoveryManager
 import com.example.session_recovery.novaDataStore
 import com.example.settings.BackupSettingsScreen
 import com.example.todo.TodoScreen
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
 import com.example.ui.theme.NovaNotesTheme
-import com.example.ui.theme.ObsidianBlack
+import com.example.ui.theme.LocalNovaArabic
 import com.example.ui.theme.StatusError
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.novaText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -106,18 +105,33 @@ class MainActivity : ComponentActivity() {
         val repository = NovaRepository(database, sessionManager, backupManager)
 
         setContent {
-            NovaNotesTheme {
-                val novaViewModel: NovaViewModel = viewModel(
-                    factory = NovaViewModel.Factory(repository)
-                )
-                NovaNotesApp(viewModel = novaViewModel)
+            val preferences = remember { getSharedPreferences("nova_appearance", MODE_PRIVATE) }
+            var isDarkTheme by remember { mutableStateOf(preferences.getBoolean("dark_theme", true)) }
+            var isArabic by remember { mutableStateOf(preferences.getString("language", "en") == "ar") }
+            CompositionLocalProvider(LocalLayoutDirection provides if (isArabic) LayoutDirection.Rtl else LayoutDirection.Ltr, LocalNovaArabic provides isArabic) {
+                NovaNotesTheme(darkTheme = isDarkTheme) {
+                    val novaViewModel: NovaViewModel = viewModel(factory = NovaViewModel.Factory(repository))
+                    NovaNotesApp(
+                        viewModel = novaViewModel,
+                        isDarkTheme = isDarkTheme,
+                        isArabic = isArabic,
+                        onThemeChange = { dark ->
+                            isDarkTheme = dark
+                            preferences.edit().putBoolean("dark_theme", dark).apply()
+                        },
+                        onLanguageChange = { arabic ->
+                            isArabic = arabic
+                            preferences.edit().putString("language", if (arabic) "ar" else "en").apply()
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun NovaNotesApp(viewModel: NovaViewModel) {
+fun NovaNotesApp(viewModel: NovaViewModel, isDarkTheme: Boolean, isArabic: Boolean, onThemeChange: (Boolean) -> Unit, onLanguageChange: (Boolean) -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -226,19 +240,19 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val useNavigationRail = maxWidth >= 700.dp
 
         Scaffold(
-            containerColor = ObsidianBlack,
+            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 if (!useNavigationRail && !editorState.isOpen) {
                     NavigationBar(
-                        containerColor = CardDarkGray,
-                        contentColor = TextWhite,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .windowInsetsPadding(WindowInsets.navigationBars)
                             .testTag("bottom_navigation_bar")
@@ -246,32 +260,32 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                         NavigationBarItem(
                             selected = currentTab == MainTab.NOTES,
                             onClick = { viewModel.selectTab(MainTab.NOTES) },
-                            icon = { Icon(Icons.Default.Description, contentDescription = "Notes") },
-                            label = { Text("Notes") },
+                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
+                            label = { Text(if (isArabic) "الملاحظات" else novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_notes")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.TODO,
                             onClick = { viewModel.selectTab(MainTab.TODO) },
-                            icon = { Icon(Icons.Default.CheckBox, contentDescription = "To-do") },
-                            label = { Text("To-do") },
+                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(LocalNovaArabic.current, "To-do", "المهام")) },
+                            label = { Text(if (isArabic) "المهام" else novaText(LocalNovaArabic.current, "To-do", "المهام")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_todo")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.MODELING,
                             onClick = { viewModel.selectTab(MainTab.MODELING) },
-                            icon = { Icon(Icons.Default.Schema, contentDescription = "Modeling") },
-                            label = { Text("Modeling") },
+                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
+                            label = { Text(if (isArabic) "تنسيق البيانات" else novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_modeling")
                         )
                         NavigationBarItem(
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
-                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = "Backup") },
-                            label = { Text("Backup") },
+                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(LocalNovaArabic.current, "Backup", "الإعدادات والنسخ الاحتياطي")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Settings", "الإعدادات")) },
                             colors = novaNavBarItemColors(),
                             modifier = Modifier.testTag("nav_tab_settings")
                         )
@@ -286,39 +300,39 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
             ) {
                 if (useNavigationRail && !editorState.isOpen) {
                     NavigationRail(
-                        containerColor = CardDarkGray,
-                        contentColor = TextWhite,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.fillMaxHeight().testTag("side_navigation_rail")
                     ) {
                         NavigationRailItem(
                             selected = currentTab == MainTab.NOTES,
                             onClick = { viewModel.selectTab(MainTab.NOTES) },
-                            icon = { Icon(Icons.Default.Description, contentDescription = "Notes") },
-                            label = { Text("Notes") },
+                            icon = { Icon(Icons.Default.Description, contentDescription = novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Notes", "الملاحظات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_notes")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.TODO,
                             onClick = { viewModel.selectTab(MainTab.TODO) },
-                            icon = { Icon(Icons.Default.CheckBox, contentDescription = "To-do") },
-                            label = { Text("To-do") },
+                            icon = { Icon(Icons.Default.CheckBox, contentDescription = novaText(LocalNovaArabic.current, "To-do", "المهام")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "To-do", "المهام")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_todo")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.MODELING,
                             onClick = { viewModel.selectTab(MainTab.MODELING) },
-                            icon = { Icon(Icons.Default.Schema, contentDescription = "Modeling") },
-                            label = { Text("Modeling") },
+                            icon = { Icon(Icons.Default.Schema, contentDescription = novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Modeling", "تنسيق البيانات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_modeling")
                         )
                         NavigationRailItem(
                             selected = currentTab == MainTab.SETTINGS,
                             onClick = { viewModel.selectTab(MainTab.SETTINGS) },
-                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = "Backup") },
-                            label = { Text("Backup") },
+                            icon = { Icon(Icons.Default.SettingsBackupRestore, contentDescription = novaText(LocalNovaArabic.current, "Backup", "الإعدادات والنسخ الاحتياطي")) },
+                            label = { Text(novaText(LocalNovaArabic.current, "Settings", "الإعدادات")) },
                             colors = novaNavRailItemColors(),
                             modifier = Modifier.testTag("rail_tab_settings")
                         )
@@ -419,7 +433,8 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                                     },
                                     onImportNotesDialogRequest = {
                                         showImportTextDialog = "NOTES"
-                                    }
+                                    },
+                                    isArabic = isArabic
                                 )
                             }
 
@@ -495,7 +510,11 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                                     },
                                     onConfirmRestore = { viewModel.confirmRestoreBackup(it) },
                                     onCloseRestorePreview = { viewModel.closeBackupPreview() },
-                                    onConfigurePinLock = { enabled, pin -> viewModel.configurePinLock(enabled, pin) }
+                                    onConfigurePinLock = { enabled, pin -> viewModel.configurePinLock(enabled, pin) },
+                                    isArabic = isArabic,
+                                    isDarkTheme = isDarkTheme,
+                                    onLanguageChange = onLanguageChange,
+                                    onThemeChange = onThemeChange
                                 )
                             }
                         }
@@ -509,9 +528,9 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             .padding(bottom = 18.dp, start = 20.dp, end = 20.dp)
                     ) {
                         Surface(
-                            color = CardElevatedGray,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, NovaCyan),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                             modifier = Modifier.testTag("status_banner")
                         ) {
                             Row(
@@ -521,7 +540,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                                 Text(
                                     text = statusBannerMessage.orEmpty(),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = NovaCyan
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -536,7 +555,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
         var rawImportText by remember(mode) { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showImportTextDialog = null },
-            containerColor = CardElevatedGray,
+            containerColor = MaterialTheme.colorScheme.surface,
             title = {
                 Text(
                     when (mode) {
@@ -544,7 +563,7 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                         "BACKUP" -> "Import & Validate Full Backup (JSON)"
                         else -> "Import Notes (TXT / JSON / CSV)"
                     },
-                    color = TextWhite
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             text = {
@@ -561,17 +580,17 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Select File from Device Storage…", color = NovaCyan)
+                        Text(novaText(LocalNovaArabic.current, "Select File from Device Storage…", "اختر ملفاً من مساحة تخزين الجهاز…"), color = MaterialTheme.colorScheme.primary)
                     }
                     Text(
                         "Or paste content directly below (validated before import):",
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     OutlinedTextField(
                         value = rawImportText,
                         onValueChange = { rawImportText = it },
-                        placeholder = { Text("Paste TXT, JSON, or CSV content here…") },
+                        placeholder = { Text(novaText(LocalNovaArabic.current, "Paste TXT, JSON, or CSV content here…", "الصق محتوى TXT أو JSON أو CSV هنا…")) },
                         minLines = 5,
                         maxLines = 10,
                         modifier = Modifier.fillMaxWidth().testTag("import_raw_text_input")
@@ -586,15 +605,15 @@ fun NovaNotesApp(viewModel: NovaViewModel) {
                             showImportTextDialog = null
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                     modifier = Modifier.testTag("confirm_import_button")
                 ) {
-                    Text("Validate & Import", fontWeight = FontWeight.Bold)
+                    Text(novaText(LocalNovaArabic.current, "Validate & Import", "التحقق والاستيراد"), fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showImportTextDialog = null }) {
-                    Text("Cancel", color = TextSecondary)
+                    Text(novaText(LocalNovaArabic.current, "Cancel", "إلغاء"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
@@ -643,7 +662,7 @@ private fun PinLockGateScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp)
             .testTag("pin_lock_gate_screen"),
         contentAlignment = Alignment.Center
@@ -652,9 +671,9 @@ private fun PinLockGateScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Icon(Icons.Default.Lock, contentDescription = null, tint = NovaCyan)
-            Text("NOVA NOTES LOCKED", style = MaterialTheme.typography.headlineMedium, color = TextWhite)
-            Text("Enter your offline PIN to unlock your notes", style = MaterialTheme.typography.bodyMedium, color = TextSecondary)
+            Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Text(novaText(LocalNovaArabic.current, "NOVA NOTES LOCKED", "نوفا للملاحظات مقفل"), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
+            Text(novaText(LocalNovaArabic.current, "Enter your offline PIN to unlock your notes", "أدخل رمز PIN لفتح ملاحظاتك"), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             OutlinedTextField(
                 value = pin,
@@ -662,7 +681,7 @@ private fun PinLockGateScreen(
                     pin = it.filter { c -> c.isDigit() }.take(8)
                     errorText = null
                 },
-                label = { Text("PIN") },
+                label = { Text(novaText(LocalNovaArabic.current, "PIN", "رمز PIN")) },
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 modifier = Modifier.width(240.dp).testTag("unlock_pin_input")
@@ -678,10 +697,10 @@ private fun PinLockGateScreen(
                         errorText = "Incorrect PIN"
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = NovaCyan, contentColor = ObsidianBlack),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier.testTag("unlock_pin_button")
             ) {
-                Text("Unlock", fontWeight = FontWeight.Bold)
+                Text(novaText(LocalNovaArabic.current, "Unlock", "فتح القفل"), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -689,18 +708,18 @@ private fun PinLockGateScreen(
 
 @Composable
 private fun novaNavBarItemColors() = NavigationBarItemDefaults.colors(
-    selectedIconColor = NovaCyan,
-    selectedTextColor = NovaCyan,
-    indicatorColor = NovaDeepTeal,
-    unselectedIconColor = TextSecondary,
-    unselectedTextColor = TextSecondary
+    selectedIconColor = MaterialTheme.colorScheme.primary,
+    selectedTextColor = MaterialTheme.colorScheme.primary,
+    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 )
 
 @Composable
 private fun novaNavRailItemColors() = NavigationRailItemDefaults.colors(
-    selectedIconColor = NovaCyan,
-    selectedTextColor = NovaCyan,
-    indicatorColor = NovaDeepTeal,
-    unselectedIconColor = TextSecondary,
-    unselectedTextColor = TextSecondary
+    selectedIconColor = MaterialTheme.colorScheme.primary,
+    selectedTextColor = MaterialTheme.colorScheme.primary,
+    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 )

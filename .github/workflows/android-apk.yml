@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - feature/arabic-modern-ui
   pull_request:
     branches:
       - main

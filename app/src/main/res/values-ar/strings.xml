@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">نوفا للملاحظات</string>
+    <string name="nav_notes">الملاحظات</string>
+    <string name="nav_todo">المهام</string>
+    <string name="nav_modeling">تنسيق البيانات</string>
+    <string name="nav_settings">الإعدادات والنسخ الاحتياطي</string>
+    <string name="search_placeholder">ابحث في الملاحظات والمجلدات والمهام…</string>
+    <string name="all_notes">كل الملاحظات</string>
+    <string name="favorites">المفضلة</string>
+    <string name="recently_edited">عُدّلت مؤخراً</string>
+    <string name="trash">سلة المحذوفات</string>
+    <string name="status_saving">جارٍ الحفظ…</string>
+    <string name="status_saved">تم الحفظ</string>
+    <string name="modeling_engine_title">محرك تنسيق البيانات</string>
+    <string name="backup_restore_title">النسخ الاحتياطي المحلي والأمان</string>
+</resources>

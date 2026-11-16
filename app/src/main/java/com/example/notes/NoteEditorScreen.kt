@@ -75,19 +75,12 @@ import com.example.core.BidiTextHelper
 import com.example.core.EditorUiState
 import com.example.core.SaveIndicatorState
 import com.example.database.FolderEntity
-import com.example.ui.theme.CardDarkGray
-import com.example.ui.theme.CardElevatedGray
-import com.example.ui.theme.NovaCyan
-import com.example.ui.theme.NovaDeepTeal
-import com.example.ui.theme.ObsidianBlack
 import com.example.ui.theme.PlusJakartaSansFontFamily
+import com.example.ui.theme.LocalNovaArabic
+import com.example.ui.theme.novaText
 import com.example.ui.theme.StatusError
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
-import com.example.ui.theme.SurfaceBorder
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSecondary
-import com.example.ui.theme.TextWhite
 
 @Composable
 fun NoteEditorScreen(
@@ -108,6 +101,8 @@ fun NoteEditorScreen(
     onExportSingleNote: (String) -> Unit,
     onShowMessage: (String) -> Unit
 ) {
+    val isArabic = LocalNovaArabic.current
+
     BackHandler(onBack = onBackAndFlush)
 
     val clipboardManager = LocalClipboardManager.current
@@ -123,6 +118,12 @@ fun NoteEditorScreen(
                 )
             )
         )
+    }
+
+    val accountCount = remember(contentFieldValue.text) {
+        Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+            .findAll(contentFieldValue.text)
+            .count()
     }
 
     LaunchedEffect(editorState.content) {
@@ -188,13 +189,13 @@ fun NoteEditorScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ObsidianBlack)
+            .background(MaterialTheme.colorScheme.background)
             .testTag("note_editor_screen")
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CardDarkGray)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -204,19 +205,19 @@ fun NoteEditorScreen(
                     onClick = onBackAndFlush,
                     modifier = Modifier.testTag("editor_back_button")
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back and Flush Save", tint = TextWhite)
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = novaText(isArabic, "Back and Flush Save", "رجوع وحفظ"), tint = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = CardElevatedGray,
+                    color = MaterialTheme.colorScheme.surface,
                     border = BorderStroke(
                         1.dp,
                         when (editorState.saveState) {
                             SaveIndicatorState.SAVING -> StatusWarning.copy(alpha = 0.6f)
                             SaveIndicatorState.SAVED -> StatusSuccess.copy(alpha = 0.5f)
                             SaveIndicatorState.ERROR -> StatusError.copy(alpha = 0.7f)
-                            else -> SurfaceBorder
+                            else -> MaterialTheme.colorScheme.outline
                         }
                     ),
                     modifier = Modifier.testTag("auto_save_indicator")
@@ -232,7 +233,7 @@ fun NoteEditorScreen(
                                 SaveIndicatorState.SAVING -> StatusWarning
                                 SaveIndicatorState.SAVED -> StatusSuccess
                                 SaveIndicatorState.ERROR -> StatusError
-                                else -> NovaCyan
+                                else -> MaterialTheme.colorScheme.primary
                             },
                             modifier = Modifier.size(14.dp)
                         )
@@ -245,7 +246,7 @@ fun NoteEditorScreen(
                                 else -> "Ready"
                             },
                             style = MaterialTheme.typography.labelSmall,
-                            color = TextWhite
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -257,20 +258,20 @@ fun NoteEditorScreen(
                     enabled = editorState.canUndo,
                     modifier = Modifier.testTag("editor_undo_button")
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = "Undo", tint = if (editorState.canUndo) NovaCyan else TextMuted)
+                    Icon(Icons.AutoMirrored.Filled.Undo, contentDescription = novaText(isArabic, "Undo", "تراجع"), tint = if (editorState.canUndo) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 IconButton(
                     onClick = onRedo,
                     enabled = editorState.canRedo,
                     modifier = Modifier.testTag("editor_redo_button")
                 ) {
-                    Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = "Redo", tint = if (editorState.canRedo) NovaCyan else TextMuted)
+                    Icon(Icons.AutoMirrored.Filled.Redo, contentDescription = novaText(isArabic, "Redo", "إعادة"), tint = if (editorState.canRedo) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 IconButton(
                     onClick = onToggleInNoteSearch,
                     modifier = Modifier.testTag("editor_search_toggle_button")
                 ) {
-                    Icon(Icons.Default.Search, contentDescription = "Search within note", tint = if (editorState.isSearchBarVisible) NovaCyan else TextSecondary)
+                    Icon(Icons.Default.Search, contentDescription = novaText(isArabic, "Search within note", "بحث داخل الملاحظة"), tint = if (editorState.isSearchBarVisible) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 IconButton(
                     onClick = onTogglePin,
@@ -278,8 +279,8 @@ fun NoteEditorScreen(
                 ) {
                     Icon(
                         imageVector = if (editorState.isPinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
-                        contentDescription = "Pin Note",
-                        tint = if (editorState.isPinned) NovaCyan else TextSecondary
+                        contentDescription = novaText(isArabic, "Pin Note", "تثبيت الملاحظة"),
+                        tint = if (editorState.isPinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -288,16 +289,16 @@ fun NoteEditorScreen(
                         onClick = { showExportDropdown = true },
                         modifier = Modifier.testTag("editor_export_button")
                     ) {
-                        Icon(Icons.Default.FileDownload, contentDescription = "Export Note", tint = TextSecondary)
+                        Icon(Icons.Default.FileDownload, contentDescription = novaText(isArabic, "Export Note", "تصدير الملاحظة"), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     DropdownMenu(
                         expanded = showExportDropdown,
                         onDismissRequest = { showExportDropdown = false },
-                        containerColor = CardElevatedGray
+                        containerColor = MaterialTheme.colorScheme.surface
                     ) {
                         listOf("TXT", "PDF", "JSON", "CSV").forEach { fmt ->
                             DropdownMenuItem(
-                                text = { Text("Export as $fmt", color = TextWhite) },
+                                text = { Text(novaText(isArabic, "Export as $fmt", "تصدير بصيغة $fmt"), color = MaterialTheme.colorScheme.onSurface) },
                                 onClick = {
                                     showExportDropdown = false
                                     onExportSingleNote(fmt)
@@ -311,7 +312,7 @@ fun NoteEditorScreen(
                     onClick = onMoveToTrash,
                     modifier = Modifier.testTag("editor_trash_button")
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = "Move to Trash", tint = StatusError.copy(alpha = 0.85f))
+                    Icon(Icons.Default.Delete, contentDescription = novaText(isArabic, "Move to Trash", "نقل إلى سلة المحذوفات"), tint = StatusError.copy(alpha = 0.85f))
                 }
             }
         }
@@ -319,7 +320,7 @@ fun NoteEditorScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CardElevatedGray)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -328,26 +329,26 @@ fun NoteEditorScreen(
                 Surface(
                     onClick = { showFolderDropdown = true },
                     shape = RoundedCornerShape(10.dp),
-                    color = CardDarkGray,
-                    border = BorderStroke(1.dp, SurfaceBorder),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     modifier = Modifier.testTag("editor_folder_selector")
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Folder, contentDescription = "Folder", tint = NovaCyan, modifier = Modifier.size(15.dp))
+                        Icon(Icons.Default.Folder, contentDescription = novaText(isArabic, "Folder", "المجلد"), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = currentFolder?.name ?: "No Folder", style = MaterialTheme.typography.labelLarge, color = TextWhite)
+                        Text(text = currentFolder?.name ?: novaText(isArabic, "No Folder", "بدون مجلد"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
                 DropdownMenu(
                     expanded = showFolderDropdown,
                     onDismissRequest = { showFolderDropdown = false },
-                    containerColor = CardElevatedGray
+                    containerColor = MaterialTheme.colorScheme.surface
                 ) {
                     DropdownMenuItem(
-                        text = { Text("No Folder (Unfiled)", color = TextSecondary) },
+                        text = { Text(novaText(isArabic, "No Folder (Unfiled)", "بدون مجلد"), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                         onClick = {
                             onSetFolder(null)
                             showFolderDropdown = false
@@ -355,7 +356,7 @@ fun NoteEditorScreen(
                     )
                     folders.forEach { folder ->
                         DropdownMenuItem(
-                            text = { Text(folder.name, color = TextWhite) },
+                            text = { Text(folder.name, color = MaterialTheme.colorScheme.onSurface) },
                             onClick = {
                                 onSetFolder(folder.id)
                                 showFolderDropdown = false
@@ -379,7 +380,7 @@ fun NoteEditorScreen(
                         onSetDirection(nextDir)
                     },
                     shape = RoundedCornerShape(8.dp),
-                    color = NovaDeepTeal,
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     modifier = Modifier.testTag("editor_direction_toggle")
                 ) {
                     Row(
@@ -388,12 +389,12 @@ fun NoteEditorScreen(
                     ) {
                         Icon(
                             imageVector = if (isRtl) Icons.AutoMirrored.Filled.FormatTextdirectionRToL else Icons.AutoMirrored.Filled.FormatTextdirectionLToR,
-                            contentDescription = "Text Direction",
-                            tint = NovaCyan,
+                            contentDescription = novaText(isArabic, "Text Direction", "اتجاه النص"),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(15.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = editorState.textDirection.uppercase(), style = MaterialTheme.typography.labelSmall, color = NovaCyan)
+                        Text(text = editorState.textDirection.uppercase(), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     }
                 }
 
@@ -414,8 +415,8 @@ fun NoteEditorScreen(
                             "END" -> Icons.AutoMirrored.Filled.FormatAlignRight
                             else -> Icons.AutoMirrored.Filled.FormatAlignLeft
                         },
-                        contentDescription = "Text Alignment",
-                        tint = NovaCyan,
+                        contentDescription = novaText(isArabic, "Text Alignment", "محاذاة النص"),
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(17.dp)
                     )
                 }
@@ -427,7 +428,7 @@ fun NoteEditorScreen(
                     },
                     modifier = Modifier.size(34.dp).testTag("editor_copy_button")
                 ) {
-                    Icon(Icons.Default.ContentCopy, contentDescription = "Copy Note", tint = TextSecondary, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.ContentCopy, contentDescription = novaText(isArabic, "Copy Note", "نسخ الملاحظة"), tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                 }
 
                 IconButton(
@@ -445,7 +446,7 @@ fun NoteEditorScreen(
                     },
                     modifier = Modifier.size(34.dp).testTag("editor_paste_button")
                 ) {
-                    Icon(Icons.Default.ContentPaste, contentDescription = "Paste from Clipboard", tint = TextSecondary, modifier = Modifier.size(16.dp))
+                    Icon(Icons.Default.ContentPaste, contentDescription = novaText(isArabic, "Paste from Clipboard", "لصق من الحافظة"), tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(16.dp))
                 }
             }
         }
@@ -454,24 +455,24 @@ fun NoteEditorScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(CardDarkGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .padding(horizontal = 14.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
                     value = editorState.inNoteSearchQuery,
                     onValueChange = onUpdateInNoteSearch,
-                    placeholder = { Text("Find inside note…", color = TextMuted) },
+                    placeholder = { Text(novaText(isArabic, "Find inside note…", "ابحث داخل الملاحظة…"), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                     singleLine = true,
                     modifier = Modifier.weight(1f).testTag("in_note_search_input"),
-                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = NovaCyan, unfocusedBorderColor = SurfaceBorder)
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = MaterialTheme.colorScheme.outline)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = "$searchMatchesCount matches", style = MaterialTheme.typography.labelLarge, color = NovaCyan)
+                Text(text = novaText(isArabic, "$searchMatchesCount matches", "$searchMatchesCount نتيجة"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             }
         }
 
-        HorizontalDivider(color = SurfaceBorder)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
         CompositionLocalProvider(LocalLayoutDirection provides if (isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
             Column(
@@ -493,18 +494,18 @@ fun NoteEditorScreen(
                         )
                     },
                     textStyle = MaterialTheme.typography.headlineMedium.copy(
-                        color = TextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = resolvedTextAlign,
                         textDirection = if (isRtl) TextDirection.Rtl else TextDirection.Ltr
                     ),
-                    cursorBrush = SolidColor(NovaCyan),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     modifier = Modifier.fillMaxWidth().testTag("note_title_input"),
                     decorationBox = { innerTextField ->
                         Box(modifier = Modifier.fillMaxWidth()) {
                             if (editorState.title.isEmpty()) {
                                 Text(
                                     text = if (isRtl) "عنوان الملاحظة..." else "Note Title…",
-                                    style = MaterialTheme.typography.headlineMedium.copy(color = TextMuted, textAlign = resolvedTextAlign),
+                                    style = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = resolvedTextAlign),
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
@@ -515,25 +516,75 @@ fun NoteEditorScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(text = "${contentFieldValue.text.length} chars", style = MaterialTheme.typography.labelSmall, color = TextMuted)
-                    Text(text = "${contentFieldValue.text.lines().size} lines", style = MaterialTheme.typography.labelSmall, color = TextMuted)
-                    Text(text = "Cursor: ${contentFieldValue.selection.start}", style = MaterialTheme.typography.labelSmall, color = NovaCyan.copy(alpha = 0.8f))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val stats = listOf(
+                        novaText(isArabic, "${contentFieldValue.text.length} characters", "${contentFieldValue.text.length} حرف"),
+                        novaText(isArabic, "${contentFieldValue.text.lines().size} lines", "${contentFieldValue.text.lines().size} سطر"),
+                        novaText(isArabic, "$accountCount accounts", "$accountCount حساب")
+                    )
+                    stats.forEachIndexed { index, label ->
+                        Surface(
+                            color = if (index == 2) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f) else MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Text(
+                                text = label,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (index == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = novaText(isArabic, "Cursor: ${contentFieldValue.selection.start}", "المؤشر: ${contentFieldValue.selection.start}"),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                HorizontalDivider(color = SurfaceBorder.copy(alpha = 0.5f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
                 Spacer(modifier = Modifier.height(14.dp))
 
                 BasicTextField(
                     value = contentFieldValue,
                     onValueChange = { newValue ->
-                        contentFieldValue = newValue
+                        // Keep Android's native double-tap gesture and expand its word selection
+                        // to the complete account line. This preserves the native selection handles
+                        // and contextual copy menu instead of intercepting touch events.
+                        val selectionStart = minOf(newValue.selection.start, newValue.selection.end)
+                        val selectionEnd = maxOf(newValue.selection.start, newValue.selection.end)
+                        val safeStart = selectionStart.coerceIn(0, newValue.text.length)
+                        val safeEnd = selectionEnd.coerceIn(0, newValue.text.length)
+                        val selectedText = newValue.text.substring(safeStart, safeEnd)
+                        val isSingleWordSelection = safeStart < safeEnd &&
+                            selectedText.isNotBlank() &&
+                            selectedText.none { it.isWhitespace() }
+
+                        val lineStart = if (safeStart == 0) 0
+                            else newValue.text.lastIndexOf('\n', safeStart - 1) + 1
+                        val nextLineBreak = newValue.text.indexOf('\n', safeEnd)
+                        val lineEnd = if (nextLineBreak < 0) newValue.text.length else nextLineBreak
+                        val accountLine = newValue.text.substring(lineStart, lineEnd)
+                        val containsEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}")
+                            .containsMatchIn(accountLine)
+
+                        val updatedValue = if (isSingleWordSelection && containsEmail) {
+                            newValue.copy(selection = TextRange(lineStart, lineEnd))
+                        } else {
+                            newValue
+                        }
+                        contentFieldValue = updatedValue
                         onTextChanged(
                             editorState.title,
-                            newValue.text,
-                            newValue.selection.start,
-                            newValue.selection.end,
+                            updatedValue.text,
+                            updatedValue.selection.start,
+                            updatedValue.selection.end,
                             verticalScrollState.value
                         )
                     },
@@ -541,11 +592,11 @@ fun NoteEditorScreen(
                         fontFamily = PlusJakartaSansFontFamily,
                         fontSize = 16.sp,
                         lineHeight = 25.sp,
-                        color = TextWhite,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = resolvedTextAlign,
                         textDirection = if (isRtl) TextDirection.Rtl else TextDirection.Ltr
                     ),
-                    cursorBrush = SolidColor(NovaCyan),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(680.dp)
@@ -559,7 +610,7 @@ fun NoteEditorScreen(
                                     } else {
                                         "Start writing… Every keystroke is automatically saved to the local database."
                                     },
-                                    style = MaterialTheme.typography.bodyLarge.copy(color = TextMuted, textAlign = resolvedTextAlign),
+                                    style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = resolvedTextAlign),
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
