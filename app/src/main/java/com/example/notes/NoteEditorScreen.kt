@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -118,6 +121,12 @@ fun NoteEditorScreen(
                 )
             )
         )
+    }
+
+    val accountCount = remember(contentFieldValue.text) {
+        Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}")
+            .findAll(contentFieldValue.text)
+            .count()
     }
 
     LaunchedEffect(editorState.content) {
@@ -510,10 +519,35 @@ fun NoteEditorScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(text = novaText(isArabic, "${contentFieldValue.text.length} chars", "${contentFieldValue.text.length} حرفاً"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = novaText(isArabic, "${contentFieldValue.text.lines().size} lines", "${contentFieldValue.text.lines().size} سطراً"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = novaText(isArabic, "Cursor: ${contentFieldValue.selection.start}", "مؤشر الكتابة: ${contentFieldValue.selection.start}"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val stats = listOf(
+                        novaText(isArabic, "${contentFieldValue.text.length} characters", "${contentFieldValue.text.length} حرف"),
+                        novaText(isArabic, "${contentFieldValue.text.lines().size} lines", "${contentFieldValue.text.lines().size} سطر"),
+                        novaText(isArabic, "$accountCount accounts", "$accountCount حساب")
+                    )
+                    stats.forEachIndexed { index, label ->
+                        Surface(
+                            color = if (index == 2) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f) else MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Text(
+                                text = label,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (index == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = novaText(isArabic, "Cursor: ${contentFieldValue.selection.start}", "المؤشر: ${contentFieldValue.selection.start}"),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -544,7 +578,25 @@ fun NoteEditorScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(680.dp)
+                        .pointerInput(contentFieldValue.text) {
+                            detectTapGestures(onDoubleTap = { tapOffset ->
+                                val layout = contentTextLayout ?: return@detectTapGestures
+                                val text = contentFieldValue.text
+                                if (text.isEmpty()) return@detectTapGestures
+                                val offset = layout.getOffsetForPosition(tapOffset).coerceIn(0, text.length)
+                                val lineStart = if (offset == 0) 0 else text.lastIndexOf('\\n', (offset - 1).coerceAtLeast(0)) + 1
+                                val nextBreak = text.indexOf('\\n', offset)
+                                val lineEnd = if (nextBreak < 0) text.length else nextBreak
+                                val accountLine = text.substring(lineStart, lineEnd)
+                                val hasEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}").containsMatchIn(accountLine)
+                                if (hasEmail && lineEnd > lineStart) {
+                                    contentFieldValue = contentFieldValue.copy(selection = TextRange(lineStart, lineEnd))
+                                    onViewportChanged(lineStart, lineEnd, verticalScrollState.value)
+                                }
+                            })
+                        }
                         .testTag("note_content_input"),
+                    onTextLayout = { contentTextLayout = it },
                     decorationBox = { innerTextField ->
                         Box(modifier = Modifier.fillMaxSize()) {
                             if (contentFieldValue.text.isEmpty()) {
