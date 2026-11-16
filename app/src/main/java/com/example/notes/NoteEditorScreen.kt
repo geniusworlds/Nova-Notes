@@ -584,8 +584,8 @@ fun NoteEditorScreen(
                                 val text = contentFieldValue.text
                                 if (text.isEmpty()) return@detectTapGestures
                                 val offset = layout.getOffsetForPosition(tapOffset).coerceIn(0, text.length)
-                                val lineStart = if (offset == 0) 0 else text.lastIndexOf('\\n', (offset - 1).coerceAtLeast(0)) + 1
-                                val nextBreak = text.indexOf('\\n', offset)
+                                val lineStart = if (offset == 0) 0 else text.lastIndexOf('\n', (offset - 1).coerceAtLeast(0)) + 1
+                                val nextBreak = text.indexOf('\n', offset)
                                 val lineEnd = if (nextBreak < 0) text.length else nextBreak
                                 val accountLine = text.substring(lineStart, lineEnd)
                                 val hasEmail = Regex("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}").containsMatchIn(accountLine)
